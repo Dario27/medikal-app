@@ -18,6 +18,7 @@ const connectDB = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const mongoURI = config_1.default.get("mongoURI");
         //const nameDb = config.get("nameDb")
+        console.log("mongoURI =>", config_1.default.get("mongoURI"));
         yield (0, mongoose_1.connect)(mongoURI).then(dbName => {
             console.log("MongoDB Connected...", dbName.connection.name);
         });

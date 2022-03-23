@@ -53,7 +53,7 @@ router.post("/create", (req, res) => __awaiter(void 0, void 0, void 0, function*
     const altura = body.altura;
     const peso = body.peso;
     const sexo = body.sexo;
-    const phone = body.phne;
+    const phone = body.phone;
     const fecha = new Date();
     const dateCreated = fecha.getTime();
     console.log(" entrando al api de usuarios");
@@ -89,7 +89,7 @@ router.post("/create", (req, res) => __awaiter(void 0, void 0, void 0, function*
         }
         else {
             const dataUserResponse = {
-                menssage: "Usuario ya encuentra registrado",
+                menssage: "Usuario ya se encuentra registrado",
                 status: false
             };
             res.json(dataUserResponse);
@@ -121,19 +121,20 @@ router.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* 
         if (password === passwText) {
             data = {
                 message: "Usuario encontrado",
-                status: "true",
+                status: true,
                 dataUserLogin: foundUser
             };
         }
         else {
             data = {
                 message: "Usuario o Contraseña incorrectas",
-                status: "false"
+                status: false
             };
         }
         res.send(data);
     }
     catch (error) {
+        console.log("Error => /login " + error.message);
     }
 }));
 router.post("/forgotPassw", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
