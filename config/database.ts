@@ -5,6 +5,7 @@ const connectDB = async () => {
   try {
     const mongoURI: string = config.get("mongoURI") 
     //const nameDb = config.get("nameDb")
+    console.log("mongoURI =>", config.get("mongoURI"))
     await connect(mongoURI).then(dbName => {      
       console.log("MongoDB Connected...", dbName.connection.name)
     });

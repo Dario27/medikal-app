@@ -22,7 +22,7 @@ router.post("/create", async(req:Request, res:Response)=>{
     const altura               = body.altura
     const peso                 = body.peso
     const sexo                 = body.sexo
-    const phone: String        = body.phne
+    const phone: String        = body.phone
 
     const fecha = new Date()
     const dateCreated   = fecha.getTime()
