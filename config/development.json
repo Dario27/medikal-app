@@ -1,8 +1,8 @@
 {
-    "mongoURI": "mongodb+srv://admin:admin@clustercovid.nnbu7.mongodb.net/medikal-app?authSource=admin&replicaSet=atlas-rtmdse-shard-0&readPreference=primary&appname=MongoDB%20Compass&ssl=true",
+    "mongoURI": "mongodb+srv://admin:admin@clustercovid.nnbu7.mongodb.net/medikal-app-dev?authSource=admin&replicaSet=atlas-rtmdse-shard-0&readPreference=primary&appname=MongoDB%20Compass&ssl=true",
     "jwtSecret": "ABCDEF0123456789ABCDEF0123456789",
     "jwtExpiration": 360000,
-    "nameDb":"medikal-app",
+    "nameDb":"medikal-app-dev",
     "environment": "development",
     "key":"ABCDEF0123456789ABCDEF0123456789",
     "smtpMail":"smtp.gmail.com",

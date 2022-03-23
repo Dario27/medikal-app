@@ -1,0 +1,12 @@
+{
+    "mongoURI": "mongodb+srv://admin:admin@clustercovid.nnbu7.mongodb.net/medikal-app?authSource=admin&replicaSet=atlas-rtmdse-shard-0&readPreference=primary&appname=MongoDB%20Compass&ssl=true",
+    "jwtSecret": "ABCDEF0123456789ABCDEF0123456789",
+    "jwtExpiration": 360000,
+    "nameDb":"medikal-app",
+    "environment": "production",
+    "key":"ABCDEF0123456789ABCDEF0123456789",
+    "smtpMail":"smtp.gmail.com",
+    "emailSend":"chilansteven221@gmail.com",
+    "claveCorreo":"CuentaGmail2022"
+}
+  
