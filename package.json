@@ -10,7 +10,7 @@
     "deploy": "node dist/src/server.js",
     "watch-deploy": "nodemon dist/src/server.js",
     "server:development": "concurrently \"SET NODE_ENV=development\" \"npm run watch-tsc\" \"npm run watch-deploy\"",
-    "start": "concurrently \"SET NODE_ENV=production\" \"npm run deploy\""
+    "start": "export NODE_ENV=production && npm run deploy"
   },
   "repository": {
     "type": "git",
