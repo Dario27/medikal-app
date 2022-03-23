@@ -63,7 +63,7 @@ router.post("/create", async(req:Request, res:Response)=>{
             res.json(response);
         }else{
             const dataUserResponse = {
-                menssage : "Usuario ya encuentra registrado",
+                menssage : "Usuario ya se encuentra registrado",
                 status: false
             }
             res.json(dataUserResponse); 
@@ -106,20 +106,20 @@ router.post('/login', async(req:Request, res:Response)=>{
         if(password === passwText){
             data = {
                 message: "Usuario encontrado",
-                status:  "true",
+                status:  true,
                 dataUserLogin: foundUser
             }
         }else{
             data = {
                 message: "Usuario o Contraseña incorrectas",
-                status:  "false"
+                status:  false
             }
         }
         
         res.send(data)
 
     } catch (error) {
-        
+        console.log("Error => /login " +error.message)
     }
 
 })
