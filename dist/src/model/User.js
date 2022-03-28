@@ -30,17 +30,16 @@ const userSchema = new mongoose_1.Schema({
     nombres: String,
     apellidos: String,
     email: String,
-    anioNac: Number,
+    birthDate: Date,
     password: String,
     dateCreated: {
         type: Date,
         default: Date.now
     },
-    altura: String,
-    peso: String,
-    sexo: String,
     phone: String,
-    edad: String
+    bloodType: String,
+    edad: String,
+    genre: String
 });
 // Note: OverwriteModelError: Cannot overwrite `User` model once compiled. error
 exports.User = (mongoose_1.default.models.users || mongoose_1.default.model('users', userSchema, "users"));

@@ -16,24 +16,21 @@ router.post("/create", async(req:Request, res:Response)=>{
     
     const nombres :String      = body.nombres
     const apellidos: String    = body.apellidos
-    const anioNac:number       = body.anioNac    
+    const birthDate:Date       = body.birthDate    
     const password: String     = body.password
     const email: String        = body.email
-    const altura               = body.altura
-    const peso                 = body.peso
-    const sexo                 = body.sexo
+    const bloodType            = body.bloodType
     const phone: String        = body.phone
+    const genre                = body.genre
 
-    const fecha = new Date()
-    const dateCreated   = fecha.getTime()
-  
     console.log(" entrando al api de usuarios")
     const encryptSecretKey:any = config.get("key")
     //console.log("encryptSecretKey =>", encryptSecretKey)
     try {
         const _email:String  = email
 
-
+        const anioNac = new Date(birthDate).getFullYear()
+        console.log("anio Nac ", anioNac)
         const passwordEncrypt = encrypt(password, encryptSecretKey)
         const anioCurrent = new Date().getFullYear()
         const currentEdad = (anioCurrent-anioNac)
@@ -41,24 +38,26 @@ router.post("/create", async(req:Request, res:Response)=>{
         const userData:IUser = {            
             nombres    : nombres,
             apellidos  : apellidos,
-            anioNac    : anioNac,
+            birthDate  : birthDate,
             phone      : phone,
             password   : passwordEncrypt,
-            altura     : altura,
-            peso       : peso,
-            sexo       : sexo,
             edad       : currentEdad.toString(),
-            email      : email        
+            email      : email,
+            bloodType  : bloodType, 
+            genre      : genre
         }
         
         const foundUsers = await findOneAndVerify(_email)
         if (foundUsers === null) {
             //console.log("data users: ", userData)
             const result = await createUser(userData) 
+            const _token = jsonwebtoken.sign({userId: result._id, email: result.email}, config.get("jwtSecret"), {expiresIn: '300s'})        
+        
             const response = {
-                message: "Guardado con éxito...",
-                status: true,
-                data:result
+                message : "Guardado con éxito...",
+                status  : true,
+                data    : result,
+                token   : _token
             }
             res.json(response);
         }else{
@@ -84,39 +83,54 @@ router.post('/login', async(req:Request, res:Response)=>{
     const body = req.body 
     const password      = body.password
     const email         = body.email
+    const apiKey        = req.headers["x-api-key"]
 
     try {
 
+        console.log("email ", email)
         const encryptSecretKey:any = config.get("key")
         console.log("encryptSecretKey =>", encryptSecretKey)
 
         /* const dataEnc = encrypt(password, encryptSecretKey)
         console.log("dataEnc =>", dataEnc) */
-        
 
-        const foundUser = await findOneAndVerify(email)
-        const passwTextB64 = foundUser.password 
+        const arrayToken = apiKey.split(' ')[1]
+        console.log("arrayToken =>", arrayToken)
+        const tokenValid = arrayToken
 
-        console.log("pass1 ", passwTextB64)
-
-        const passwText = decryptPassw(passwTextB64, encryptSecretKey)
-        console.log("constraseña plana => ", passwText);
-
-        var data = null
-        if(password === passwText){
-            data = {
-                message: "Usuario encontrado",
-                status:  true,
-                dataUserLogin: foundUser
+        //console.log("keysecret => ", config.get("jwtSecret"))
+        const verify = jsonwebtoken.verify(tokenValid, config.get("jwtSecret"), (errorToken:any) =>{
+            if(errorToken) {
+                return res.json({ status:"forbidden", message:"token caducado"})
             }
-        }else{
-            data = {
-                message: "Usuario o Contraseña incorrectas",
-                status:  false
+        })
+
+        if(typeof verify === "undefined"){
+            const foundUser = await findOneAndVerify(email)
+            console.log("users =>", foundUser)
+            const passwTextB64 = foundUser.password 
+
+            console.log("pass1 ", passwTextB64)
+
+            const passwText = decryptPassw(passwTextB64, encryptSecretKey)
+            console.log("constraseña plana => ", passwText);
+
+            var data = null
+            if(password === passwText){
+                data = {
+                    message: "Usuario encontrado",
+                    status:  true,
+                    dataUserLogin: foundUser
+                }
+            }else{
+                data = {
+                    message: "Usuario o Contraseña incorrectas",
+                    status:  false
+                }
             }
+            
+            res.send(data)
         }
-        
-        res.send(data)
 
     } catch (error) {
         console.log("Error => /login " +error.message)
@@ -130,12 +144,12 @@ router.post("/forgotPassw", async(req:Request, res:Response) => {
     const email  = body.email
     console.log("email param =>", email)
     var linkVerify = null
-    var token = null
+    var token1 = null
     try {
         const userData = await findOneAndVerify(email)
         if(userData !=null){
-            token = jsonwebtoken.sign({userId: userData._id, email: userData.email}, config.get("jwtSecret"), {expiresIn: '300s'})        
-            linkVerify = `http://localhost:1997/reset-password/${token}`
+            token1 = jsonwebtoken.sign({userId: userData._id, email: userData.email}, config.get("jwtSecret"), {expiresIn: '300s'})        
+            linkVerify = `http://localhost:1997/reset-password/${token1}`
         }
 
         await sendMail(userData.email, linkVerify)
@@ -144,7 +158,7 @@ router.post("/forgotPassw", async(req:Request, res:Response) => {
             status:  "success",
             message: "Correo enviado con exito", 
             data:{
-                token:     token, 
+                token:     token1, 
                 linkReset: linkVerify 
             }
         })
@@ -173,10 +187,10 @@ router.post('/new-password', async (req:Request, res:Response) => {
         }
 
         //console.log("tokenHeader=> ", arrayToken)
-        const token = arrayToken
+        const token2 = arrayToken
 
         //console.log("keysecret => ", config.get("jwtSecret"))
-        const verify = jsonwebtoken.verify(token, config.get("jwtSecret"), (errorToken:any) =>{
+        const verify = jsonwebtoken.verify(token2, config.get("jwtSecret"), (errorToken:any) =>{
             if(errorToken) {
                 return res.json({ status:"forbidden", message:"token caducado"})
             }else{
