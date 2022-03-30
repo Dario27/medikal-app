@@ -2,6 +2,8 @@ import moment from "moment"
 import crypto from "crypto"
 import nodemailer from "nodemailer"
 import config from "config"
+import * as jsonwebtoken from "jsonwebtoken";
+import { findOneAndVerify } from "../services/UserServices";
 
 //const SecrectIv = (CryptoJS.lib.WordArray.random(128 / 8)).toString();
 const SecrectIv = 'ABCDEF0123456789ABCDEF0123456789';
@@ -75,4 +77,46 @@ export const sendMail = async(email:any, linkVerify:any)=>{
   console.log("Message sent: %s", info.response);
 
   return "email send"
+}
+
+export const firstLogin = async (email:any, passw:any, token:any) => {
+  const encryptSecretKey:any = config.get("key")
+  console.log("encryptSecretKeyLogin =>", encryptSecretKey)
+
+  const arrayToken = token.split(' ')[1]
+  console.log("arrayTokenLogin =>", arrayToken)
+  const tokenValid = arrayToken
+  
+  const verify = jsonwebtoken.verify(tokenValid, config.get("jwtSecret"), (errorToken:any) =>{
+    if(errorToken) {
+        return { status:"forbidden", message:"token caducado"}
+    }
+  })
+
+  if(typeof verify === "undefined"){
+    const foundUser = await findOneAndVerify(email)
+    console.log("users =>", foundUser)
+    const passwTextB64 = foundUser.password 
+
+    console.log("pass1 ", passwTextB64)
+
+    const passwText = decryptPassw(passwTextB64, encryptSecretKey)
+    console.log("constraseña plana => ", passwText);
+
+    var data = null
+    if(passw === passwText){
+        data = {
+            message       : "Usuario logueado correctamente",
+            status        : true,
+            token         : tokenValid
+        }
+    }else{
+        data = {
+            message: "Usuario o Contraseña incorrectas",
+            status:  false
+        }
+    }
+    
+    return data
+}
 }

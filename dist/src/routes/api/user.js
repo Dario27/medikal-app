@@ -45,14 +45,14 @@ const router = (0, express_1.Router)();
 router.post("/create", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const body = req.body;
     console.log("body-create-user => ", body);
-    const nombres = body.nombres;
-    const apellidos = body.apellidos;
+    const nombres = body.fName;
+    const apellidos = body.lName;
     const birthDate = body.birthDate;
     const password = body.password;
     const email = body.email;
     const bloodType = body.bloodType;
     const phone = body.phone;
-    const genre = body.genre;
+    const genre = body.gender;
     console.log(" entrando al api de usuarios");
     const encryptSecretKey = config_1.default.get("key");
     //console.log("encryptSecretKey =>", encryptSecretKey)
@@ -64,27 +64,23 @@ router.post("/create", (req, res) => __awaiter(void 0, void 0, void 0, function*
         const anioCurrent = new Date().getFullYear();
         const currentEdad = (anioCurrent - anioNac);
         const userData = {
-            nombres: nombres,
-            apellidos: apellidos,
+            fName: nombres,
+            lName: apellidos,
             birthDate: birthDate,
             phone: phone,
             password: passwordEncrypt,
-            edad: currentEdad.toString(),
+            age: currentEdad.toString(),
             email: email,
             bloodType: bloodType,
-            genre: genre
+            gender: genre
         };
         const foundUsers = yield (0, UserServices_1.findOneAndVerify)(_email);
         if (foundUsers === null) {
             //console.log("data users: ", userData)
             const result = yield (0, UserServices_1.createUser)(userData);
-            const _token = jsonwebtoken.sign({ userId: result._id, email: result.email }, config_1.default.get("jwtSecret"), { expiresIn: '300s' });
-            const response = {
-                message: "Guardado con éxito...",
-                status: true,
-                data: result,
-                token: _token
-            };
+            const _token = jsonwebtoken.sign({ userId: result._id, email: result.email }, config_1.default.get("jwtSecret"), { expiresIn: '86400s' });
+            const tokenLogin = "Bearer " + _token;
+            const response = yield (0, Utils_1.firstLogin)(userData.email, password, tokenLogin);
             res.json(response);
         }
         else {
@@ -92,7 +88,7 @@ router.post("/create", (req, res) => __awaiter(void 0, void 0, void 0, function*
                 menssage: "Usuario ya se encuentra registrado",
                 status: false
             };
-            res.json(dataUserResponse);
+            res.status(400).json(dataUserResponse);
         }
     }
     catch (error) {

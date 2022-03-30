@@ -1,21 +1,21 @@
 import mongoose,{ Schema } from 'mongoose';
 console.log("schema user.....")
 export interface IUser extends Document {
-    nombres         : String;
-    apellidos       : String;
+    fName           : String;
+    lName           : String;
     email           : String;
     birthDate       : Date;
     dateCreated     : Date;
     password        : String;
     phone           : String;
     bloodType       : String;
-    edad            : String;
-    genre           : String;
+    age             : String;
+    gender          : String;
   }
 
   const userSchema: Schema = new Schema({
-    nombres         : String,
-    apellidos       : String,
+    fName           : String,
+    lName           : String,
     email           : String,
     birthDate       : Date,
     password        : String,   
@@ -25,8 +25,8 @@ export interface IUser extends Document {
     },
     phone           : String,
     bloodType       : String,
-    edad            : String,
-    genre           : String
+    age             : String,
+    gender          : String
   });
   
   // Note: OverwriteModelError: Cannot overwrite `User` model once compiled. error
