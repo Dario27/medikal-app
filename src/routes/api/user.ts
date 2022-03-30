@@ -62,7 +62,7 @@ router.post("/create", async(req:Request, res:Response)=>{
                 menssage : "Usuario ya se encuentra registrado",
                 status: false
             }
-            res.status(400).json(dataUserResponse)
+            res.status(403).json(dataUserResponse)
         }
   
     } catch (error) {
