@@ -59,10 +59,11 @@ router.post("/create", async(req:Request, res:Response)=>{
 
         }else{
             const dataUserResponse = {
-                menssage : "Usuario ya se encuentra registrado",
+                message : "Usuario ya se encuentra registrado",
                 status: false
             }
-            res.status(403).json(dataUserResponse)
+            res.status(403).json(dataUserResponse) //mensaje de error 
+
         }
   
     } catch (error) {

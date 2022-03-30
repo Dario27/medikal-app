@@ -85,10 +85,10 @@ router.post("/create", (req, res) => __awaiter(void 0, void 0, void 0, function*
         }
         else {
             const dataUserResponse = {
-                menssage: "Usuario ya se encuentra registrado",
+                message: "Usuario ya se encuentra registrado",
                 status: false
             };
-            res.status(400).json(dataUserResponse);
+            res.status(403).json(dataUserResponse); //mensaje de error 
         }
     }
     catch (error) {
