@@ -2,7 +2,7 @@ import config from "config";
 import { Router, Response, Request } from "express";
 import { IUser, User } from "../../model/User";
 import { findOneAndVerify, createUser, updatePassword } from "../../services/UserServices";
-import { convertDateWithMoment, decryptPassw, encrypt, sendMail } from "../../Utils/Utils"
+import { convertDateWithMoment, decryptPassw, encrypt, firstLogin, sendMail } from "../../Utils/Utils"
 import * as jsonwebtoken from "jsonwebtoken";
 //import Mail from "nodemailer/lib/mailer";
 
@@ -14,14 +14,14 @@ router.post("/create", async(req:Request, res:Response)=>{
 
     console.log("body-create-user => ", body)
     
-    const nombres :String      = body.nombres
-    const apellidos: String    = body.apellidos
+    const nombres :String      = body.fName
+    const apellidos: String    = body.lName
     const birthDate:Date       = body.birthDate    
     const password: String     = body.password
     const email: String        = body.email
     const bloodType            = body.bloodType
     const phone: String        = body.phone
-    const genre                = body.genre
+    const genre                = body.gender
 
     console.log(" entrando al api de usuarios")
     const encryptSecretKey:any = config.get("key")
@@ -36,36 +36,33 @@ router.post("/create", async(req:Request, res:Response)=>{
         const currentEdad = (anioCurrent-anioNac)
 
         const userData:IUser = {            
-            nombres    : nombres,
-            apellidos  : apellidos,
+            fName      : nombres,
+            lName      : apellidos,
             birthDate  : birthDate,
             phone      : phone,
             password   : passwordEncrypt,
-            edad       : currentEdad.toString(),
+            age        : currentEdad.toString(),
             email      : email,
             bloodType  : bloodType, 
-            genre      : genre
+            gender     : genre
         }
         
         const foundUsers = await findOneAndVerify(_email)
         if (foundUsers === null) {
             //console.log("data users: ", userData)
             const result = await createUser(userData) 
-            const _token = jsonwebtoken.sign({userId: result._id, email: result.email}, config.get("jwtSecret"), {expiresIn: '300s'})        
+            const _token = jsonwebtoken.sign({userId: result._id, email: result.email}, config.get("jwtSecret"), {expiresIn: '86400s'})
+            const tokenLogin = "Bearer "+_token
+            const response = await firstLogin(userData.email, password, tokenLogin)
         
-            const response = {
-                message : "Guardado con éxito...",
-                status  : true,
-                data    : result,
-                token   : _token
-            }
             res.json(response);
+
         }else{
             const dataUserResponse = {
                 menssage : "Usuario ya se encuentra registrado",
                 status: false
             }
-            res.json(dataUserResponse); 
+            res.status(400).json(dataUserResponse)
         }
   
     } catch (error) {

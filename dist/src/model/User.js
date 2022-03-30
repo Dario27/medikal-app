@@ -27,8 +27,8 @@ exports.User = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
 console.log("schema user.....");
 const userSchema = new mongoose_1.Schema({
-    nombres: String,
-    apellidos: String,
+    fName: String,
+    lName: String,
     email: String,
     birthDate: Date,
     password: String,
@@ -38,8 +38,8 @@ const userSchema = new mongoose_1.Schema({
     },
     phone: String,
     bloodType: String,
-    edad: String,
-    genre: String
+    age: String,
+    gender: String
 });
 // Note: OverwriteModelError: Cannot overwrite `User` model once compiled. error
 exports.User = (mongoose_1.default.models.users || mongoose_1.default.model('users', userSchema, "users"));
