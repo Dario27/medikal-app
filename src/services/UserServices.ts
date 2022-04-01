@@ -45,3 +45,22 @@ export const updatePassword = async (user:IUser)=>{
         return error.message;
     } 
 }
+
+export const insCodeValidator = async (code: Number, email:string)=>{
+    var validCode = null
+    console.log("guardamos el code ")
+    try {
+        validCode = await User.findOneAndUpdate(
+            { "email": email},
+            { $set: {                
+                "codeValidador" : code
+            }},
+            { new: true }
+        )
+        return {validCode, insert: true}
+
+    } catch (error) {
+        console.error("error al grabar ",error.message);
+        return error.message;
+    } 
+}

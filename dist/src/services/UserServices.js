@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updatePassword = exports.createUser = exports.findOneAndVerify = void 0;
+exports.insCodeValidator = exports.updatePassword = exports.createUser = exports.findOneAndVerify = void 0;
 const User_1 = require("../model/User");
 const findOneAndVerify = (email) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -54,4 +54,19 @@ const updatePassword = (user) => __awaiter(void 0, void 0, void 0, function* () 
     }
 });
 exports.updatePassword = updatePassword;
+const insCodeValidator = (code, email) => __awaiter(void 0, void 0, void 0, function* () {
+    var validCode = null;
+    console.log("guardamos el code ");
+    try {
+        validCode = yield User_1.User.findOneAndUpdate({ "email": email }, { $set: {
+                "codeValidador": code
+            } }, { new: true });
+        return { validCode, insert: true };
+    }
+    catch (error) {
+        console.error("error al grabar ", error.message);
+        return error.message;
+    }
+});
+exports.insCodeValidator = insCodeValidator;
 //# sourceMappingURL=UserServices.js.map

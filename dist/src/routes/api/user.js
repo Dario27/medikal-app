@@ -151,26 +151,37 @@ router.post("/forgotPassw", (req, res) => __awaiter(void 0, void 0, void 0, func
     const body = req.body;
     const email = body.email;
     console.log("email param =>", email);
-    var linkVerify = null;
-    var token1 = null;
     try {
         const userData = yield (0, UserServices_1.findOneAndVerify)(email);
         if (userData != null) {
-            token1 = jsonwebtoken.sign({ userId: userData._id, email: userData.email }, config_1.default.get("jwtSecret"), { expiresIn: '300s' });
-            linkVerify = `http://localhost:1997/reset-password/${token1}`;
-        }
-        yield (0, Utils_1.sendMail)(userData.email, linkVerify);
-        res.status(200).json({
-            status: "success",
-            message: "Correo enviado con exito",
-            data: {
-                token: token1,
-                linkReset: linkVerify
+            //token1 = jsonwebtoken.sign({userId: userData._id, email: userData.email}, config.get("jwtSecret"), {expiresIn: '300s'})        
+            //linkVerify = `http://localhost:1997/reset-password/${token1}`
+            const codeValidator = Math.floor(1000 + Math.random() * 9000);
+            console.log("codeValidator => ", codeValidator);
+            const { insert } = yield (0, UserServices_1.insCodeValidator)(codeValidator, email);
+            if (insert) {
+                yield (0, Utils_1.sendMail)(userData.email, codeValidator);
+                res.status(200).json({
+                    status: "success",
+                    message: "Correo enviado con exito"
+                });
             }
-        });
+            else {
+                res.status(400).json({
+                    status: "Fail",
+                    message: "Error, no se ha podido generar el codigo temporal"
+                });
+            }
+        }
+        else {
+            res.status(400).json({
+                status: "Fail",
+                message: "Error, el usuario ingresado, no existe"
+            });
+        }
     }
     catch (error) {
-        return res.status(200).json({ status: "Fail", message: "Error linea 143 => " + error.message });
+        return res.status(200).json({ status: "Fail", message: "Error linea 173 => " + error.message });
     }
 }));
 router.post('/new-password', (req, res) => __awaiter(void 0, void 0, void 0, function* () {

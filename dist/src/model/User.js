@@ -39,7 +39,11 @@ const userSchema = new mongoose_1.Schema({
     phone: String,
     bloodType: String,
     age: String,
-    gender: String
+    gender: String,
+    codeValidador: {
+        type: Number,
+        default: '0o0'
+    }
 });
 // Note: OverwriteModelError: Cannot overwrite `User` model once compiled. error
 exports.User = (mongoose_1.default.models.users || mongoose_1.default.model('users', userSchema, "users"));

@@ -11,6 +11,7 @@ export interface IUser extends Document {
     bloodType       : String;
     age             : String;
     gender          : String;
+    codeValidador   : Number;
   }
 
   const userSchema: Schema = new Schema({
@@ -26,7 +27,11 @@ export interface IUser extends Document {
     phone           : String,
     bloodType       : String,
     age             : String,
-    gender          : String
+    gender          : String,
+    codeValidador   : {
+      type: Number,
+      default: '0o0'
+    }
   });
   
   // Note: OverwriteModelError: Cannot overwrite `User` model once compiled. error
