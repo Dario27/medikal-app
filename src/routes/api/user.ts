@@ -1,7 +1,7 @@
 import config from "config";
 import { Router, Response, Request } from "express";
 import { IUser, User } from "../../model/User";
-import { findOneAndVerify, createUser, updatePassword } from "../../services/UserServices";
+import { findOneAndVerify, createUser, updatePassword, insCodeValidator } from "../../services/UserServices";
 import { convertDateWithMoment, decryptPassw, encrypt, firstLogin, sendMail } from "../../Utils/Utils"
 import * as jsonwebtoken from "jsonwebtoken";
 //import Mail from "nodemailer/lib/mailer";
@@ -141,28 +141,37 @@ router.post("/forgotPassw", async(req:Request, res:Response) => {
 
     const email  = body.email
     console.log("email param =>", email)
-    var linkVerify = null
-    var token1 = null
     try {
         const userData = await findOneAndVerify(email)
-        if(userData !=null){
-            token1 = jsonwebtoken.sign({userId: userData._id, email: userData.email}, config.get("jwtSecret"), {expiresIn: '300s'})        
-            linkVerify = `http://localhost:1997/reset-password/${token1}`
-        }
+        if(userData != null){
+            //token1 = jsonwebtoken.sign({userId: userData._id, email: userData.email}, config.get("jwtSecret"), {expiresIn: '300s'})        
+            //linkVerify = `http://localhost:1997/reset-password/${token1}`
+            const codeValidator = Math.floor(1000 + Math.random() * 9000)
+            console.log("codeValidator => ", codeValidator)
 
-        await sendMail(userData.email, linkVerify)
+            const { insert } = await insCodeValidator(codeValidator, email)
+            if(insert){
+                await sendMail(userData.email, codeValidator)
 
-        res.status(200).json({
-            status:  "success",
-            message: "Correo enviado con exito", 
-            data:{
-                token:     token1, 
-                linkReset: linkVerify 
+                res.status(200).json({
+                    status:  "success",
+                    message: "Correo enviado con exito"
+                })
+            }else{
+                res.status(400).json({
+                    status:  "Fail",
+                    message: "Error, no se ha podido generar el codigo temporal"
+                }) 
             }
-        })
+        }else{
+            res.status(400).json({
+                status:  "Fail",
+                message: "Error, el usuario ingresado, no existe"
+            }) 
+        }
         
     } catch (error) {
-        return res.status(200).json({status:  "Fail", message:"Error linea 143 => "+error.message})
+        return res.status(200).json({status:  "Fail", message:"Error linea 173 => "+error.message})
     }
 
 })

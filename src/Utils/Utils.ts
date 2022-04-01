@@ -42,7 +42,7 @@ export const decryptPassw = (ciphertextB64:any, encryptSecretKey:any) =>{
   return descrypt.update(ciphertextB64, 'base64', 'utf-8').concat(descrypt.final('utf-8'))
 }
 
-export const sendMail = async(email:any, linkVerify:any)=>{
+export const sendMail = async(email:any, codeValidator:any)=>{
   
   const host = config.get("smtpMail")// "smtp.gmail.com"
   const user = config.get("emailSend")//"chilansteven221@gmail.com"
@@ -63,15 +63,15 @@ export const sendMail = async(email:any, linkVerify:any)=>{
         pass: password,
       },
       logger: true
-    });
+    });    
 
   // send mail with defined transport object //<a href="https://www.duplichecker.com/">Duplicate Checker</a>
   const info = await transporter.sendMail({
-      from: '"Info marketplacetes" <chilansteven221@gmail.com>',
+      from: `Info medikal-app <${username}>`,
       to: email,
       subject: "Recuperar contraseña",
-      text: "Dar clic en el siguiente link, para resetear su clave.",
-      html: `<p> Para poder resetear su contraseña, por favor dar clic <a href="${linkVerify}" target="_blank">aqui</a></p></br><p>Este link tiene estará disponible solo 5 minutos</p></br><p>En caso de no poder ingresar al link, copie y pega el enlace en su navegador</p></br><p> ${linkVerify}</p></p>`
+      text: "Para restablecer su contraseña ingresar el codigo de verificacion.",
+      html: `<p>Solicitud de recuperacion de contraseña, su codigo de verificacion es: <strong>${codeValidator}</strong> </p>`
   });
 
   console.log("Message sent: %s", info.response);
