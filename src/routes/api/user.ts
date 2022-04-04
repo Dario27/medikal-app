@@ -183,7 +183,7 @@ router.post("/forgotPassw", async(req:Request, res:Response) => {
 router.post('/verifyCode', async (req:Request, res:Response) => {
     const body = req.body
     console.log("body => ", body) 
-    const codeValidator = body.code
+    const codeValidator = body.resetToken
     const email = body.email
     try {
         const result = await verifyCode(codeValidator, email)
