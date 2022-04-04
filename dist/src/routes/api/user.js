@@ -96,7 +96,7 @@ router.post("/create", (req, res) => __awaiter(void 0, void 0, void 0, function*
             message: "Error: " + error.message,
             status: false
         };
-        res.json(errorResponse);
+        res.status(404).json(errorResponse);
     }
 }));
 router.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -144,7 +144,11 @@ router.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* 
         }
     }
     catch (error) {
-        console.log("Error => /login " + error.message);
+        const errorResponse = {
+            message: "Error: " + error.message,
+            status: false
+        };
+        res.status(404).json(errorResponse);
     }
 }));
 router.post("/forgotPassw", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -181,53 +185,72 @@ router.post("/forgotPassw", (req, res) => __awaiter(void 0, void 0, void 0, func
         }
     }
     catch (error) {
-        return res.status(200).json({ status: "Fail", message: "Error linea 173 => " + error.message });
+        return res.status(404).json({ message: error.message, status: "Fail", });
     }
 }));
-router.post('/new-password', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post('/verifyCode', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const body = req.body;
     console.log("body => ", body);
-    const tokenHeader = req.headers.tokens;
+    const codeValidator = body.code;
     const email = body.email;
-    const newPassword = body.password;
-    const arrayToken = tokenHeader.split(' ')[1];
     try {
-        const UserData = {
-            email: email,
-            password: newPassword
-        };
-        //console.log("tokenHeader=> ", arrayToken)
-        const token2 = arrayToken;
-        //console.log("keysecret => ", config.get("jwtSecret"))
-        const verify = jsonwebtoken.verify(token2, config_1.default.get("jwtSecret"), (errorToken) => {
-            if (errorToken) {
-                return res.json({ status: "forbidden", message: "token caducado" });
-            }
-            else {
-            }
-        });
-        if (typeof verify === "undefined") {
-            console.log("verify => ", verify);
-            console.log("user Data: ", UserData);
-            const result = yield (0, UserServices_1.updatePassword)(UserData);
-            console.log("result update=> ", result);
-            if (result !== null) {
-                return res.json({
-                    status: "success",
-                    mensaje: "Contraseña modificada"
-                });
-            }
-            else {
-                return res.json({
-                    status: "fail",
-                    mensaje: "Error al actualizar su contraseña"
-                });
-            }
+        const result = yield (0, UserServices_1.verifyCode)(codeValidator, email);
+        if (result == null || !result) {
+            return res.status(400).json({
+                message: "Codigo ingresado inválido",
+                status: "Fail",
+            });
+        }
+        else {
+            return res.status(200).json({
+                message: "Codigo ingresado correctamente",
+                status: result,
+            });
         }
     }
     catch (error) {
         console.log("Error linea 187: " + error.message);
-        return "Error linea 187: " + error.message;
+        const errorResponse = {
+            message: "Error: " + error.message,
+            status: false
+        };
+        res.status(404).json(errorResponse);
+    }
+}));
+router.post('/newPassword', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const body = req.body;
+    console.log("body => ", body);
+    const email = body.email;
+    const newPassword = body.password;
+    try {
+        const encryptSecretKey = config_1.default.get("key");
+        const passwordEncrypt = (0, Utils_1.encrypt)(newPassword, encryptSecretKey);
+        const UserData = {
+            email: email,
+            password: passwordEncrypt
+        };
+        console.log("user Data: ", UserData);
+        const result = yield (0, UserServices_1.updatePassword)(UserData);
+        console.log("result update=> ", result);
+        if (result !== null) {
+            return res.status(200).json({
+                status: "success",
+                message: "Contraseña modificada"
+            });
+        }
+        else {
+            return res.status(400).json({
+                status: "fail",
+                message: "Error al actualizar su contraseña"
+            });
+        }
+    }
+    catch (error) {
+        const errorResponse = {
+            message: "Error: " + error.message,
+            status: false
+        };
+        res.status(404).json(errorResponse);
     }
 }));
 exports.default = router;

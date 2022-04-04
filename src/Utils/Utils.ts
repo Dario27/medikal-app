@@ -89,7 +89,7 @@ export const firstLogin = async (email:any, passw:any, token:any) => {
   
   const verify = jsonwebtoken.verify(tokenValid, config.get("jwtSecret"), (errorToken:any) =>{
     if(errorToken) {
-        return { status:"forbidden", message:"token caducado"}
+        return { message:"token caducado", status:"forbidden"}
     }
   })
 

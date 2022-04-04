@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.insCodeValidator = exports.updatePassword = exports.createUser = exports.findOneAndVerify = void 0;
+exports.verifyCode = exports.insCodeValidator = exports.updatePassword = exports.createUser = exports.findOneAndVerify = void 0;
 const User_1 = require("../model/User");
 const findOneAndVerify = (email) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -69,4 +69,24 @@ const insCodeValidator = (code, email) => __awaiter(void 0, void 0, void 0, func
     }
 });
 exports.insCodeValidator = insCodeValidator;
+const verifyCode = (code, email) => __awaiter(void 0, void 0, void 0, function* () {
+    var verifySuccess = false;
+    var userverified = null;
+    console.log("validamos codigo 4 digitos");
+    try {
+        userverified = yield User_1.User.findOne({ "email": email, "codeValidador": code });
+        if (userverified == null) {
+            return userverified;
+        }
+        else {
+            verifySuccess = true;
+        }
+        return verifySuccess;
+    }
+    catch (error) {
+        console.error("error al grabar ", error.message);
+        return error.message;
+    }
+});
+exports.verifyCode = verifyCode;
 //# sourceMappingURL=UserServices.js.map

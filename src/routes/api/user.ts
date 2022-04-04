@@ -1,7 +1,7 @@
 import config from "config";
 import { Router, Response, Request } from "express";
 import { IUser, User } from "../../model/User";
-import { findOneAndVerify, createUser, updatePassword, insCodeValidator } from "../../services/UserServices";
+import { findOneAndVerify, createUser, updatePassword, insCodeValidator, verifyCode } from "../../services/UserServices";
 import { convertDateWithMoment, decryptPassw, encrypt, firstLogin, sendMail } from "../../Utils/Utils"
 import * as jsonwebtoken from "jsonwebtoken";
 //import Mail from "nodemailer/lib/mailer";
@@ -71,7 +71,7 @@ router.post("/create", async(req:Request, res:Response)=>{
             message : "Error: "+error.message,
             status: false
         }
-        res.json(errorResponse);
+        res.status(404).json(errorResponse);
     }  
 
 })
@@ -131,7 +131,12 @@ router.post('/login', async(req:Request, res:Response)=>{
         }
 
     } catch (error) {
-        console.log("Error => /login " +error.message)
+
+        const errorResponse = {
+            message : "Error: "+error.message,
+            status: false
+        }
+        res.status(404).json(errorResponse);
     }
 
 })
@@ -171,61 +176,81 @@ router.post("/forgotPassw", async(req:Request, res:Response) => {
         }
         
     } catch (error) {
-        return res.status(200).json({status:  "Fail", message:"Error linea 173 => "+error.message})
+        return res.status(404).json({message: error.message, status:  "Fail", })
     }
 
 })
 
-
-router.post('/new-password', async (req:Request, res:Response) => {
+router.post('/verifyCode', async (req:Request, res:Response) => {
     const body = req.body
-    console.log("body => ", body)
-    const tokenHeader = req.headers.tokens
-
-    const email  = body.email
-    const newPassword = body.password
-    
-    const arrayToken = tokenHeader.split(' ')[1]
-
+    console.log("body => ", body) 
+    const codeValidator = body.code
+    const email = body.email
     try {
-        const UserData:IUser = {
-            email: email,
-            password: newPassword
+        const result = await verifyCode(codeValidator, email)
+        if(result == null || !result){
+            return res.status(400).json({                
+                message:"Codigo ingresado inválido", 
+                status:"Fail",
+            })
+        }else{
+            return res.status(200).json({                
+                message:"Codigo ingresado correctamente",
+                status: result,
+            })
         }
 
-        //console.log("tokenHeader=> ", arrayToken)
-        const token2 = arrayToken
-
-        //console.log("keysecret => ", config.get("jwtSecret"))
-        const verify = jsonwebtoken.verify(token2, config.get("jwtSecret"), (errorToken:any) =>{
-            if(errorToken) {
-                return res.json({ status:"forbidden", message:"token caducado"})
-            }else{
-                
-            }
-        })
-
-        if(typeof verify === "undefined"){
-            console.log("verify => ",verify)
-            console.log("user Data: ",UserData)
-            const result = await updatePassword(UserData)
-            console.log("result update=> ",result)
-
-            if(result !==null){
-            return res.json({
-                status:"success",
-                mensaje:"Contraseña modificada"
-            })
-            }else{
-            return res.json({
-                status:"fail",
-                mensaje:"Error al actualizar su contraseña"
-            })
-            }
-        }
     } catch (error) {
         console.log("Error linea 187: " + error.message)
-        return "Error linea 187: " + error.message        
+        const errorResponse = {
+            message : "Error: "+error.message,
+            status: false
+        }
+        res.status(404).json(errorResponse);
+    }
+
+})
+
+router.post('/newPassword', async (req:Request, res:Response) => {
+
+    const body = req.body
+    console.log("body => ", body)    
+    const email  = body.email
+    const newPassword = body.password
+
+    try {
+        
+        const encryptSecretKey:any = config.get("key")
+        const passwordEncrypt = encrypt(newPassword, encryptSecretKey)
+
+        const UserData:IUser = {
+            email: email,
+            password: passwordEncrypt
+        }
+
+        console.log("user Data: ",UserData)
+        const result = await updatePassword(UserData)
+        console.log("result update=> ",result)
+
+        if(result !==null){
+        return res.status(200).json({
+            status:"success",
+            message:"Contraseña modificada"
+        })
+        }else{
+            return res.status(400).json({
+                status:"fail",
+                message:"Error al actualizar su contraseña"
+            })
+        }
+        
+    } catch (error) {
+
+        const errorResponse = {
+            message : "Error: "+error.message,
+            status: false
+        }
+        res.status(404).json(errorResponse);
     }
     
     
