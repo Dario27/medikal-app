@@ -222,9 +222,11 @@ router.post('/newPassword', (req, res) => __awaiter(void 0, void 0, void 0, func
     console.log("body => ", body);
     const email = body.email;
     const newPassword = body.password;
+    const resetToken = body.resetToken;
     try {
         const encryptSecretKey = config_1.default.get("key");
         const passwordEncrypt = (0, Utils_1.encrypt)(newPassword, encryptSecretKey);
+        console.log("code token => ", resetToken);
         const UserData = {
             email: email,
             password: passwordEncrypt
