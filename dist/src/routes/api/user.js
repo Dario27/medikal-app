@@ -78,7 +78,7 @@ router.post("/create", (req, res) => __awaiter(void 0, void 0, void 0, function*
         if (foundUsers === null) {
             //console.log("data users: ", userData)
             const result = yield (0, UserServices_1.createUser)(userData);
-            const _token = jsonwebtoken.sign({ userId: result._id, email: result.email }, config_1.default.get("jwtSecret"), { expiresIn: '86400s' });
+            const _token = jsonwebtoken.sign({ userId: result._id, email: result.email }, config_1.default.get("jwtSecret"));
             const tokenLogin = "Bearer " + _token;
             const response = yield (0, Utils_1.firstLogin)(userData.email, password, tokenLogin);
             res.json(response);
