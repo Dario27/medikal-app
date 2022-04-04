@@ -51,7 +51,7 @@ router.post("/create", async(req:Request, res:Response)=>{
         if (foundUsers === null) {
             //console.log("data users: ", userData)
             const result = await createUser(userData) 
-            const _token = jsonwebtoken.sign({userId: result._id, email: result.email}, config.get("jwtSecret"), {expiresIn: '86400s'})
+            const _token = jsonwebtoken.sign({userId: result._id, email: result.email}, config.get("jwtSecret"))
             const tokenLogin = "Bearer "+_token
             const response = await firstLogin(userData.email, password, tokenLogin)
         
