@@ -76,7 +76,6 @@ router.post("/create", async(req:Request, res:Response)=>{
 
 })
 
-
 router.post('/login', async(req:Request, res:Response)=>{
     const body = req.body 
     const password      = body.password
@@ -158,25 +157,25 @@ router.post("/forgotPassw", async(req:Request, res:Response) => {
             if(insert){
                 await sendMail(userData.email, codeValidator)
 
-                res.status(200).json({
-                    status:  "success",
-                    message: "Correo enviado con exito"
+                res.status(200).json({                    
+                    message: "Correo enviado con exito",
+                    status:  "success"
                 })
             }else{
                 res.status(400).json({
-                    status:  "Fail",
-                    message: "Error, no se ha podido generar el codigo temporal"
+                    message: "Error, no se ha podido generar el codigo temporal",
+                    status:  "Fail"
                 }) 
             }
         }else{
             res.status(400).json({
-                status:  "Fail",
-                message: "Error, el usuario ingresado, no existe"
+                message: "Error, el usuario ingresado, no existe",
+                status:  "Fail"
             }) 
         }
         
     } catch (error) {
-        return res.status(404).json({message: error.message, status:  "Fail", })
+        return res.status(404).json({message: error.message, status: "Fail", })
     }
 
 })
@@ -233,14 +232,14 @@ router.post('/newPassword', async (req:Request, res:Response) => {
         console.log("result update=> ",result)
 
         if(result !==null){
-        return res.status(200).json({
-            status:"success",
-            message:"Contraseña modificada"
+        return res.status(200).json({            
+            message:"Contraseña modificada",
+            status:"success"
         })
         }else{
-            return res.status(400).json({
-                status:"fail",
-                message:"Error al actualizar su contraseña"
+            return res.status(400).json({                
+                message:"Error al actualizar su contraseña",
+                status:"fail"
             })
         }
         
