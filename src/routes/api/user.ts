@@ -216,11 +216,13 @@ router.post('/newPassword', async (req:Request, res:Response) => {
     console.log("body => ", body)    
     const email  = body.email
     const newPassword = body.password
+    const resetToken = body.resetToken
 
     try {
         
         const encryptSecretKey:any = config.get("key")
         const passwordEncrypt = encrypt(newPassword, encryptSecretKey)
+        console.log("code token => ", resetToken)
 
         const UserData:IUser = {
             email: email,
