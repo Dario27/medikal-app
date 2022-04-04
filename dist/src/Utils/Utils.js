@@ -110,7 +110,7 @@ const firstLogin = (email, passw, token) => __awaiter(void 0, void 0, void 0, fu
     const tokenValid = arrayToken;
     const verify = jsonwebtoken.verify(tokenValid, config_1.default.get("jwtSecret"), (errorToken) => {
         if (errorToken) {
-            return { status: "forbidden", message: "token caducado" };
+            return { message: "token caducado", status: "forbidden" };
         }
     });
     if (typeof verify === "undefined") {

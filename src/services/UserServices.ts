@@ -64,3 +64,22 @@ export const insCodeValidator = async (code: Number, email:string)=>{
         return error.message;
     } 
 }
+
+export const verifyCode = async (code:number, email:string) => {
+    var verifySuccess = false
+    var userverified = null
+    console.log("validamos codigo 4 digitos")
+    try {
+        userverified = await User.findOne({ "email": email, "codeValidador": code})
+        if (userverified == null){
+            return userverified
+        }else{
+            verifySuccess = true
+        }
+        return verifySuccess
+
+    } catch (error) {
+        console.error("error al grabar ",error.message);
+        return error.message;
+    } 
+}
