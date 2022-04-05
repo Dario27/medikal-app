@@ -113,34 +113,54 @@ router.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* 
         const arrayToken = apiKey.split(' ')[1];
         console.log("arrayToken =>", arrayToken);
         const tokenValid = arrayToken;
+        var err = null;
         //console.log("keysecret => ", config.get("jwtSecret"))
         const verify = jsonwebtoken.verify(tokenValid, config_1.default.get("jwtSecret"), (errorToken) => {
+            console.log("errorToken", errorToken);
             if (errorToken) {
+                err = errorToken;
                 return res.json({ status: "forbidden", message: "token caducado" });
             }
         });
-        if (typeof verify === "undefined") {
-            const foundUser = yield (0, UserServices_1.findOneAndVerify)(email);
-            console.log("users =>", foundUser);
+        const foundUser = yield (0, UserServices_1.findOneAndVerify)(email);
+        console.log("users =>", foundUser);
+        if (typeof verify === "undefined" && foundUser !== null) {
             const passwTextB64 = foundUser.password;
             console.log("pass1 ", passwTextB64);
             const passwText = (0, Utils_1.decryptPassw)(passwTextB64, encryptSecretKey);
             console.log("constraseña plana => ", passwText);
             var data = null;
-            if (password === passwText) {
+            if (foundUser === null) {
                 data = {
-                    message: "Usuario encontrado",
-                    status: true,
-                    dataUserLogin: foundUser
-                };
-            }
-            else {
-                data = {
-                    message: "Usuario o Contraseña incorrectas",
+                    message: "Usuario no existe",
                     status: false
                 };
+                return res.status(404).json(data);
             }
-            res.send(data);
+            else {
+                if (password === passwText) {
+                    data = {
+                        message: "Usuario encontrado",
+                        status: true,
+                        dataUserLogin: foundUser
+                    };
+                    return res.status(200).send(data);
+                }
+                else {
+                    data = {
+                        message: "Usuario o Contraseña incorrectas",
+                        status: false
+                    };
+                    return res.status(400).send(data);
+                }
+            }
+        }
+        else {
+            const rdata = {
+                message: "Usuario no existe",
+                status: false
+            };
+            return res.status(404).json(rdata);
         }
     }
     catch (error) {
