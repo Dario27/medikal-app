@@ -80,7 +80,7 @@ router.post('/login', async(req:Request, res:Response)=>{
     const body = req.body 
     const password      = body.password
     const email         = body.email
-    const apiKey        = req.headers["x-api-key"]
+    //const apiKey        = req.headers["x-api-key"]
 
     try {
 
@@ -91,23 +91,23 @@ router.post('/login', async(req:Request, res:Response)=>{
         /* const dataEnc = encrypt(password, encryptSecretKey)
         console.log("dataEnc =>", dataEnc) */
 
-        const arrayToken = apiKey.split(' ')[1]
+        /* const arrayToken = apiKey.split(' ')[1]
         console.log("arrayToken =>", arrayToken)
-        const tokenValid = arrayToken
+        const tokenValid = arrayToken */
 
         var err = null
         //console.log("keysecret => ", config.get("jwtSecret"))
-        const verify = jsonwebtoken.verify(tokenValid, config.get("jwtSecret"), (errorToken:any) =>{
+        /* const verify = jsonwebtoken.verify(tokenValid, config.get("jwtSecret"), (errorToken:any) =>{
             console.log("errorToken", errorToken)
             if(errorToken) {
                 err = errorToken
                 return res.json({ status:"forbidden", message:"token caducado"})
             }
-        })
+        }) */
 
         const foundUser = await findOneAndVerify(email)
         console.log("users =>", foundUser)
-        if(typeof verify === "undefined" && foundUser !== null){            
+        if(foundUser !== null){            
             const passwTextB64 = foundUser.password 
             console.log("pass1 ", passwTextB64)
 
@@ -123,10 +123,11 @@ router.post('/login', async(req:Request, res:Response)=>{
                 return res.status(404).json(data);
             }else{
                 if(password === passwText){
+                    const _token = jsonwebtoken.sign({userId: foundUser._id, email: foundUser.email}, config.get("jwtSecret"))
                     data = {
                         message: "Usuario encontrado",
                         status:  true,
-                        dataUserLogin: foundUser
+                        token: _token
                     }
                     return res.status(200).send(data)
                 }else{
@@ -271,6 +272,10 @@ router.post('/newPassword', async (req:Request, res:Response) => {
     }
     
     
+})
+
+router.post('/profile', async (req:Request, res:Response) => {
+
 })
 
 export default router;
