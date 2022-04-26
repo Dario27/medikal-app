@@ -3,6 +3,7 @@ import express from "express";
 import bodyParser from "body-parser";
 import connectDB from "../config/database";
 import user from "./routes/api/user";
+import salud from "./routes/api/salud";
 
 const app = express();
 
@@ -33,6 +34,7 @@ app.get('/', (req, res) => {
 });
 
 app.use("/api/user", user);
+app.use("/api/salud/consultas",salud)
 
 // Una vez definidas nuestras rutas podemos iniciar el servidor
 const port = app.get("port");

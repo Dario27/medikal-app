@@ -2,7 +2,7 @@ import config from "config";
 import { Router, Response, Request } from "express";
 import { IUser, User } from "../../model/User";
 import { findOneAndVerify, createUser, updatePassword, insCodeValidator, verifyCode } from "../../services/UserServices";
-import { convertDateWithMoment, decryptPassw, encrypt, firstLogin, sendMail } from "../../Utils/Utils"
+import { convertDateWithMoment, decryptPassw, encrypt, firstLogin, sendMail, dataProfile } from "../../Utils/Utils"
 import * as jsonwebtoken from "jsonwebtoken";
 //import Mail from "nodemailer/lib/mailer";
 
@@ -276,6 +276,37 @@ router.post('/newPassword', async (req:Request, res:Response) => {
 
 router.post('/profile', async (req:Request, res:Response) => {
 
+    const _token: String = req.headers['x-api-key']
+    const token1 = _token.split(' ')
+    const token = token1[1]
+    
+    var err = null
+    var emailUser = null
+    jsonwebtoken.verify(token, config.get("jwtSecret"), (errorToken:any, data) =>{
+        console.log("errorToken", errorToken)
+        if(errorToken) {
+            err = errorToken
+            return res.json({ status:"forbidden", message:"token caducado"})
+        }else{
+            console.log("data =>", JSON.stringify(data))
+            console.log("email => ", data.email)
+            emailUser = data.email
+        }
+    })
+
+   const data = await dataProfile(emailUser)
+   if(data === null){
+    res.status(400).json({
+        message: "Usario no encontrado",
+        status:"fail"
+    })
+   }else{
+    res.status(200).json({
+        message : "Usuario encontrado",
+        status  : "Success",
+        data    : data
+    })
+   }    
 })
 
 export default router;

@@ -277,6 +277,37 @@ router.post('/newPassword', (req, res) => __awaiter(void 0, void 0, void 0, func
     }
 }));
 router.post('/profile', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const _token = req.headers['x-api-key'];
+    const token1 = _token.split(' ');
+    const token = token1[1];
+    var err = null;
+    var emailUser = null;
+    jsonwebtoken.verify(token, config_1.default.get("jwtSecret"), (errorToken, data) => {
+        console.log("errorToken", errorToken);
+        if (errorToken) {
+            err = errorToken;
+            return res.json({ status: "forbidden", message: "token caducado" });
+        }
+        else {
+            console.log("data =>", JSON.stringify(data));
+            console.log("email => ", data.email);
+            emailUser = data.email;
+        }
+    });
+    const data = yield (0, Utils_1.dataProfile)(emailUser);
+    if (data === null) {
+        res.status(400).json({
+            message: "Usario no encontrado",
+            status: "fail"
+        });
+    }
+    else {
+        res.status(200).json({
+            message: "Usuario encontrado",
+            status: "Success",
+            data: data
+        });
+    }
 }));
 exports.default = router;
 //# sourceMappingURL=user.js.map

@@ -1,5 +1,5 @@
 import mongoose,{ Schema } from 'mongoose';
-console.log("schema user.....")
+//console.log("schema user.....")
 export interface IUser extends Document {
     fName           : String;
     lName           : String;

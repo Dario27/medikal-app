@@ -23,27 +23,12 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.User = void 0;
+exports.Records = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
-const userSchema = new mongoose_1.Schema({
-    fName: String,
-    lName: String,
-    email: String,
-    birthDate: Date,
-    password: String,
-    dateCreated: {
-        type: Date,
-        default: Date.now
-    },
-    phone: String,
-    bloodType: String,
-    age: String,
-    gender: String,
-    codeValidador: {
-        type: Number,
-        default: '0o0'
-    }
+const recordsSchema = new mongoose_1.Schema({
+    userID: String,
+    certificates: Array
 });
-// Note: OverwriteModelError: Cannot overwrite `User` model once compiled. error
-exports.User = (mongoose_1.default.models.users || mongoose_1.default.model('users', userSchema, "users"));
-//# sourceMappingURL=User.js.map
+// Note: OverwriteModelError: Cannot overwrite `Records` model once compiled. error
+exports.Records = (mongoose_1.default.models.records || mongoose_1.default.model('records', recordsSchema, "records"));
+//# sourceMappingURL=Records.js.map

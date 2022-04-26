@@ -35,7 +35,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.firstLogin = exports.sendMail = exports.decryptPassw = exports.encrypt = exports.convertDateWithMoment = void 0;
+exports.calcularIMCPaciente = exports.dataProfile = exports.firstLogin = exports.sendMail = exports.decryptPassw = exports.encrypt = exports.convertDateWithMoment = void 0;
 const moment_1 = __importDefault(require("moment"));
 const crypto_1 = __importDefault(require("crypto"));
 const nodemailer_1 = __importDefault(require("nodemailer"));
@@ -138,4 +138,22 @@ const firstLogin = (email, passw, token) => __awaiter(void 0, void 0, void 0, fu
     }
 });
 exports.firstLogin = firstLogin;
+const dataProfile = (email) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const dataUser = yield (0, UserServices_1.findOneAndVerify)(email);
+        return dataUser;
+    }
+    catch (error) {
+        return error.message;
+    }
+});
+exports.dataProfile = dataProfile;
+const calcularIMCPaciente = (estatura, peso) => {
+    const _estatura = (estatura * estatura);
+    console.log("estatura =>", estatura);
+    const imc = parseFloat((peso / _estatura).toFixed(2));
+    console.log("imc =>", imc);
+    return imc;
+};
+exports.calcularIMCPaciente = calcularIMCPaciente;
 //# sourceMappingURL=Utils.js.map
