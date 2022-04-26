@@ -95,7 +95,7 @@ router.post("/glucemia", async(req:Request, res:Response)=>{
 router.post("/imc", async(req:Request, res:Response)=>{ 
 
     const body = req.body;
-    const estatura:string = body.height
+    const estatura = body.height
     const peso = body.weight
     const email = req.headers["email"]
     var response = null
@@ -164,6 +164,22 @@ router.post("/imc", async(req:Request, res:Response)=>{
         }
 
     } catch (error) {
+        const respErr = {
+            message: error.message,
+            status: "fail"
+        }
+        res.status(400).json(respErr)
+    }
+})
+
+router.post("/presionarterial", async(req:Request, res:Response)=>{
+    const body = req.body;
+    const presionAlta = body.alta
+    const presionBaja = body.baja
+    const email = req.headers["email"]
+    try {
+        res.send({"message":"success"})
+    } catch (error ) {
         const respErr = {
             message: error.message,
             status: "fail"
