@@ -155,5 +155,21 @@ router.post("/imc", (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         res.status(400).json(respErr);
     }
 }));
+router.post("/presionarterial", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const body = req.body;
+    const presionAlta = body.alta;
+    const presionBaja = body.baja;
+    const email = req.headers["email"];
+    try {
+        res.send({ "message": "success" });
+    }
+    catch (error) {
+        const respErr = {
+            message: error.message,
+            status: "fail"
+        };
+        res.status(400).json(respErr);
+    }
+}));
 exports.default = router;
 //# sourceMappingURL=salud.js.map
