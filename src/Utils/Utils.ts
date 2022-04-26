@@ -120,3 +120,22 @@ export const firstLogin = async (email:any, passw:any, token:any) => {
     return data
 }
 }
+
+export const dataProfile = async (email:any) => { 
+
+  try {
+    const dataUser = await findOneAndVerify(email)
+    return dataUser
+  } catch (error) {
+    return error.message
+  }
+}
+
+export const calcularIMCPaciente =  (estatura: any, peso:any) => {
+ 
+  const _estatura = (estatura*estatura)
+  console.log("estatura =>" , estatura)
+  const imc = parseFloat((peso/_estatura).toFixed(2))
+  console.log("imc =>" , imc)
+    return imc;
+}

@@ -8,6 +8,7 @@ const express_1 = __importDefault(require("express"));
 const body_parser_1 = __importDefault(require("body-parser"));
 const database_1 = __importDefault(require("../config/database"));
 const user_1 = __importDefault(require("./routes/api/user"));
+const salud_1 = __importDefault(require("./routes/api/salud"));
 const app = (0, express_1.default)();
 (0, database_1.default)();
 // Express configuration
@@ -32,6 +33,7 @@ app.get('/', (req, res) => {
     });
 });
 app.use("/api/user", user_1.default);
+app.use("/api/salud/consultas", salud_1.default);
 // Una vez definidas nuestras rutas podemos iniciar el servidor
 const port = app.get("port");
 const server = app.listen(port, () => console.log(`Server started on port ${port} - environment ${config_1.default.get("environment")}`));
