@@ -177,8 +177,69 @@ router.post("/presionarterial", async(req:Request, res:Response)=>{
     const presionAlta = body.alta
     const presionBaja = body.baja
     const email = req.headers["email"]
+    var respuestaMedica = ""
+    var response = null
     try {
-        res.send({"message":"success"})
+
+        if (presionBaja < 80 &&  presionAlta <60){
+            console.log("opcion 1")
+            respuestaMedica = "PRESION ARTERIAL BAJA"
+            response = {
+                status: 200,
+                message: respuestaMedica
+            }
+            return  res.status(200).json(response)
+        }
+        if ((presionBaja >= 80 && presionBaja < 120) && (presionAlta >= 60 && presionAlta < 80)){
+            respuestaMedica = "PRESION ARTERIAL NORMAL"
+            console.log("opcion 2")
+            response = {
+                status: 200,
+                message: respuestaMedica
+            }
+            return    res.status(200).json(response)
+        }
+
+        if ((presionBaja >= 130 && presionBaja < 140) && (presionAlta >= 85 && presionAlta < 90)){
+            respuestaMedica = "PRESION ARTERIAL NORMAL ALTA"
+            console.log("opcion 3")
+            response = {
+                status: 200,
+                message: respuestaMedica
+            }
+            return    res.status(200).json(response)
+        }
+
+        if ((presionBaja >= 140 && presionBaja < 160) && (presionAlta >= 90 && presionAlta < 100)){
+            respuestaMedica = "PRESION ARTERIAL  ALTA LEVE"
+            console.log("opcion 4")
+            response = {
+                status: 200,
+                message: respuestaMedica
+            }
+            return    res.status(200).json(response)
+        }
+
+        if ((presionBaja >= 160 && presionBaja < 180) && (presionAlta >= 100 && presionAlta < 110)){
+            respuestaMedica = "PRESION ARTERIAL  ALTA MODERADA"
+            console.log("opcion 5")
+            response = {
+                status: 200,
+                message: respuestaMedica
+            }
+            return    res.status(200).json(response)
+        }
+
+        if(presionBaja >= 180 && presionAlta >= 110){
+            respuestaMedica = "PRESION ARTERIAL  ALTA CRITICA"
+            console.log("opcion 6")
+            response = {
+                status: 200,
+                message: respuestaMedica
+            }
+            return    res.status(200).json(response)
+        }
+
     } catch (error ) {
         const respErr = {
             message: error.message,
