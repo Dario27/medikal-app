@@ -1,20 +1,18 @@
 import mongoose,{ Schema } from 'mongoose';
+import { IGlucemia } from './IGlucemia';
+import { IMasa } from './IMasa';
+import { IPresion } from './Ipresion';
 
 export interface ICertificate extends Document {
-    dateOfCreated : Date;
-    imc           : String;
-    cantGlucemia  : String;
-    cantPreArt    : String;
+   glucemia  : Array<IGlucemia>;
+    imc              : Array<IMasa>;
+    presion     : Array<IPresion>;
 }
 
 const certificateSchema: Schema = new Schema({
-    dateOfCreated : { 
-        type: Date,
-        default: Date.now
-    },
-    imc           : String,
-    cantGlucemia  : String,
-    cantPreArt    : String
+    glucemia         : Array,
+    imc                      : Array,
+    cantPreArt    : Array,
 })
 
 // Note: OverwriteModelError: Cannot overwrite `Certificates` model once compiled. error

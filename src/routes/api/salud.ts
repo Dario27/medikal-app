@@ -4,6 +4,9 @@ import { saveRecords } from "./../../services/SaludServices";
 import { ICertificate } from "./../../model/Certificates";
 import { TypePeriodGlu } from "./../../model/Interfaces/TypePeriodGlu";
 import { calcularIMCPaciente } from "../../Utils/Utils";
+import { IGlucemia } from "../../model/IGlucemia";
+import { IMasa } from "../../model/IMasa";
+import { IPresion } from "../../model/Ipresion";
 
 const router: Router = Router();
 
@@ -63,14 +66,18 @@ router.post("/glucemia", async(req:Request, res:Response)=>{
                     respuesta = "MAL CONTROL HIPERGLUCEMIA"
                 }
                 break
-
         }
 
-        const certificates:ICertificate = {
-            imc: "",
-            cantPreArt: "0.00",
-            cantGlucemia: registro_glucemia.toString(),
-            dateOfCreated: new Date()
+        const dataGlucemia : IGlucemia ={
+            dateOfCreated: new Date(new Date().toISOString()),
+            cantGlucemia : registro_glucemia
+        }
+
+        const listGlucemia = []
+        listGlucemia.push(dataGlucemia)
+
+        const certificates:ICertificate = {    
+            glucemia : listGlucemia
         }
 
         const newRecord = await saveRecords(email, certificates)
@@ -160,7 +167,28 @@ router.post("/imc", async(req:Request, res:Response)=>{
                 IMC : IMC,
                 message : "OBESIDAD NIVEL 3"
             }
-            return res.status(200).json(response)
+
+            const dataIMC : IMasa ={
+                dateOfCreated: new Date(new Date().toISOString()),
+                cantImc : IMC
+            }
+
+            const listIMC = []
+            listIMC.push(dataIMC)
+
+            const certificates:ICertificate = {    
+                imc : listIMC
+            }
+
+            const newRecord = await saveRecords(email, certificates)
+
+            const resp = {
+                message: response,
+                data: newRecord,
+                status: "success"
+            }
+
+            return res.status(200).json(resp)
         }
 
     } catch (error) {
@@ -237,7 +265,29 @@ router.post("/presionarterial", async(req:Request, res:Response)=>{
                 status: 200,
                 message: respuestaMedica
             }
-            return    res.status(200).json(response)
+
+            const dataPresion : IPresion ={
+                dateOfCreated: new Date(new Date().toISOString()),
+                registroPresionAlta : presionAlta,
+                registroPresionBaja:presionBaja
+            }
+
+            const listPresion = []
+            listPresion.push(dataPresion)
+
+            const certificates:ICertificate = {    
+                presion : listPresion
+            }
+
+            const newRecord = await saveRecords(email, certificates)
+
+            const resp = {
+                message: response,
+                data: newRecord,
+                status: "success"
+            }
+
+            return    res.status(200).json(resp)
         }
 
     } catch (error ) {

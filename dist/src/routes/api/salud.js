@@ -60,11 +60,14 @@ router.post("/glucemia", (req, res) => __awaiter(void 0, void 0, void 0, functio
                 }
                 break;
         }
+        const dataGlucemia = {
+            dateOfCreated: new Date(new Date().toISOString()),
+            cantGlucemia: registro_glucemia
+        };
+        const listGlucemia = [];
+        listGlucemia.push(dataGlucemia);
         const certificates = {
-            imc: "",
-            cantPreArt: "0.00",
-            cantGlucemia: registro_glucemia.toString(),
-            dateOfCreated: new Date()
+            glucemia: listGlucemia
         };
         const newRecord = yield (0, SaludServices_1.saveRecords)(email, certificates);
         const resp = {
@@ -144,7 +147,22 @@ router.post("/imc", (req, res) => __awaiter(void 0, void 0, void 0, function* ()
                 IMC: IMC,
                 message: "OBESIDAD NIVEL 3"
             };
-            return res.status(200).json(response);
+            const dataIMC = {
+                dateOfCreated: new Date(new Date().toISOString()),
+                cantImc: IMC
+            };
+            const listIMC = [];
+            listIMC.push(dataIMC);
+            const certificates = {
+                imc: listIMC
+            };
+            const newRecord = yield (0, SaludServices_1.saveRecords)(email, certificates);
+            const resp = {
+                message: response,
+                data: newRecord,
+                status: "success"
+            };
+            return res.status(200).json(resp);
         }
     }
     catch (error) {
@@ -215,7 +233,23 @@ router.post("/presionarterial", (req, res) => __awaiter(void 0, void 0, void 0, 
                 status: 200,
                 message: respuestaMedica
             };
-            return res.status(200).json(response);
+            const dataPresion = {
+                dateOfCreated: new Date(new Date().toISOString()),
+                registroPresionAlta: presionAlta,
+                registroPresionBaja: presionBaja
+            };
+            const listPresion = [];
+            listPresion.push(dataPresion);
+            const certificates = {
+                presion: listPresion
+            };
+            const newRecord = yield (0, SaludServices_1.saveRecords)(email, certificates);
+            const resp = {
+                message: response,
+                data: newRecord,
+                status: "success"
+            };
+            return res.status(200).json(resp);
         }
     }
     catch (error) {

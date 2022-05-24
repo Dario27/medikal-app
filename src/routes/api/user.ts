@@ -276,17 +276,20 @@ router.post('/newPassword', async (req:Request, res:Response) => {
 
 router.post('/profile', async (req:Request, res:Response) => {
 
-    const _token: String = req.headers['x-api-key']
+    const _token: String = req.headers.authorization
+    //console.log("auth => ", _token)
     const token1 = _token.split(' ')
-    const token = token1[1]
+   //console.log("token1 =>", token1)
+    const token:any = token1[1]
+    console.log("token =>", token)
     
     var err = null
     var emailUser = null
-    jsonwebtoken.verify(token, config.get("jwtSecret"), (errorToken:any, data) =>{
+    jsonwebtoken.verify(token, config.get("jwtSecret"), (errorToken:any, data:any) =>{
         console.log("errorToken", errorToken)
         if(errorToken) {
             err = errorToken
-            return res.json({ status:"forbidden", message:"token caducado"})
+            return res.status(400).json({ status:"forbidden", message:err.message})
         }else{
             console.log("data =>", JSON.stringify(data))
             console.log("email => ", data.email)
@@ -296,16 +299,14 @@ router.post('/profile', async (req:Request, res:Response) => {
 
    const data = await dataProfile(emailUser)
    if(data === null){
-    res.status(400).json({
+    return res.status(400).json({
         message: "Usario no encontrado",
         status:"fail"
     })
    }else{
-    res.status(200).json({
-        message : "Usuario encontrado",
-        status  : "Success",
-        data    : data
-    })
+    return res.status(200).json(
+        data
+    )
    }    
 })
 

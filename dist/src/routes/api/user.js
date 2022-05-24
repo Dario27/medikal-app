@@ -277,16 +277,19 @@ router.post('/newPassword', (req, res) => __awaiter(void 0, void 0, void 0, func
     }
 }));
 router.post('/profile', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const _token = req.headers['x-api-key'];
+    const _token = req.headers.authorization;
+    //console.log("auth => ", _token)
     const token1 = _token.split(' ');
+    //console.log("token1 =>", token1)
     const token = token1[1];
+    console.log("token =>", token);
     var err = null;
     var emailUser = null;
     jsonwebtoken.verify(token, config_1.default.get("jwtSecret"), (errorToken, data) => {
         console.log("errorToken", errorToken);
         if (errorToken) {
             err = errorToken;
-            return res.json({ status: "forbidden", message: "token caducado" });
+            return res.status(400).json({ status: "forbidden", message: err.message });
         }
         else {
             console.log("data =>", JSON.stringify(data));
@@ -296,17 +299,13 @@ router.post('/profile', (req, res) => __awaiter(void 0, void 0, void 0, function
     });
     const data = yield (0, Utils_1.dataProfile)(emailUser);
     if (data === null) {
-        res.status(400).json({
+        return res.status(400).json({
             message: "Usario no encontrado",
             status: "fail"
         });
     }
     else {
-        res.status(200).json({
-            message: "Usuario encontrado",
-            status: "Success",
-            data: data
-        });
+        return res.status(200).json(data);
     }
 }));
 exports.default = router;
