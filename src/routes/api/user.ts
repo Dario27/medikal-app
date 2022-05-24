@@ -304,11 +304,9 @@ router.post('/profile', async (req:Request, res:Response) => {
         status:"fail"
     })
    }else{
-    return res.status(200).json({
-        message : "Usuario encontrado",
-        status  : "Success",
-        data    : data
-    })
+    return res.status(200).json(
+        data
+    )
    }    
 })
 

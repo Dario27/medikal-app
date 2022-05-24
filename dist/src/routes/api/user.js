@@ -278,9 +278,9 @@ router.post('/newPassword', (req, res) => __awaiter(void 0, void 0, void 0, func
 }));
 router.post('/profile', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const _token = req.headers.authorization;
-    console.log("auth => ", _token);
+    //console.log("auth => ", _token)
     const token1 = _token.split(' ');
-    console.log("token1 =>", token1);
+    //console.log("token1 =>", token1)
     const token = token1[1];
     console.log("token =>", token);
     var err = null;
@@ -289,7 +289,7 @@ router.post('/profile', (req, res) => __awaiter(void 0, void 0, void 0, function
         console.log("errorToken", errorToken);
         if (errorToken) {
             err = errorToken;
-            return res.status(400).json({ status: "forbidden", message: "token caducado" });
+            return res.status(400).json({ status: "forbidden", message: err.message });
         }
         else {
             console.log("data =>", JSON.stringify(data));
@@ -305,11 +305,7 @@ router.post('/profile', (req, res) => __awaiter(void 0, void 0, void 0, function
         });
     }
     else {
-        return res.status(200).json({
-            message: "Usuario encontrado",
-            status: "Success",
-            data: data
-        });
+        return res.status(200).json(data);
     }
 }));
 exports.default = router;
