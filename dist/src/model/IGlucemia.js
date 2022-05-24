@@ -23,13 +23,15 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Certificates = void 0;
+exports.Glucemia = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
-const certificateSchema = new mongoose_1.Schema({
-    glucemia: Array,
-    imc: Array,
-    cantPreArt: Array,
+const glucemiaSchema = new mongoose_1.Schema({
+    dateOfCreated: {
+        type: Date,
+        default: Date.now
+    },
+    cantGlucemia: String
 });
 // Note: OverwriteModelError: Cannot overwrite `Certificates` model once compiled. error
-exports.Certificates = (mongoose_1.default.models.certificates || mongoose_1.default.model('certificates', certificateSchema, "certificates"));
-//# sourceMappingURL=Certificates.js.map
+exports.Glucemia = (mongoose_1.default.models.glucemia || mongoose_1.default.model('glucemia', glucemiaSchema, "glucemia"));
+//# sourceMappingURL=IGlucemia.js.map
