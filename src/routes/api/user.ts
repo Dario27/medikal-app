@@ -274,7 +274,7 @@ router.post('/newPassword', async (req:Request, res:Response) => {
     
 })
 
-router.post('/profile', async (req:Request, res:Response) => {
+router.get('/profile', async (req:Request, res:Response) => {
 
     const _token: String = req.headers.authorization
     //console.log("auth => ", _token)

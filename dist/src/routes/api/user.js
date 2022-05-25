@@ -276,7 +276,7 @@ router.post('/newPassword', (req, res) => __awaiter(void 0, void 0, void 0, func
         res.status(404).json(errorResponse);
     }
 }));
-router.post('/profile', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.get('/profile', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const _token = req.headers.authorization;
     //console.log("auth => ", _token)
     const token1 = _token.split(' ');
