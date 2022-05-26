@@ -10,3 +10,9 @@ heroku git:remote -a api-medikal
 git push heroku main
 
  
+## Desarrolladores
+✔️ Steven Chilan 
+✔️ Leonel Triviño
+✔️ Jean Martillo
+
+Powered 2022
