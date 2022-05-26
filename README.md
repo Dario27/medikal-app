@@ -1,12 +1,12 @@
 # medikal-app
 
-## Command deploy heroku CLI
+# Command deploy heroku CLI
 
-# heroku git:remote -a api-medikal
+## clona los cambios del Github al Git de Heroku
 heroku git:remote -a api-medikal
 
 
-# git push heroku main
+## Enviamos los cambios al repo de Heroku en su branch 'main'
 git push heroku main
 
  
