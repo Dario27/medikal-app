@@ -27,7 +27,7 @@ exports.Records = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
 const recordsSchema = new mongoose_1.Schema({
     userID: String,
-    certificates: Array
+    certificates: Object
 });
 // Note: OverwriteModelError: Cannot overwrite `Records` model once compiled. error
 exports.Records = (mongoose_1.default.models.records || mongoose_1.default.model('records', recordsSchema, "records"));

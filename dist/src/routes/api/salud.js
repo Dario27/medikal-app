@@ -64,12 +64,7 @@ router.post("/glucemia", (req, res) => __awaiter(void 0, void 0, void 0, functio
             dateOfCreated: new Date(new Date().toISOString()),
             cantGlucemia: registro_glucemia
         };
-        const listGlucemia = [];
-        listGlucemia.push(dataGlucemia);
-        const certificates = {
-            glucemia: listGlucemia
-        };
-        const newRecord = yield (0, SaludServices_1.saveRecords)(email, certificates);
+        const newRecord = yield (0, SaludServices_1.saveRecordsGlucemia)(email, dataGlucemia);
         const resp = {
             message: respuesta,
             data: newRecord,
@@ -99,7 +94,7 @@ router.post("/imc", (req, res) => __awaiter(void 0, void 0, void 0, function* ()
                 IMC: IMC,
                 message: "NIVEL DE PESO BAJO SEVERO"
             };
-            return res.status(200).json(response);
+            // return res.status(200).json(response)
         }
         if (IMC <= 18.5 && IMC <= 18.50) {
             response = {
@@ -107,7 +102,7 @@ router.post("/imc", (req, res) => __awaiter(void 0, void 0, void 0, function* ()
                 IMC: IMC,
                 message: "NIVEL DE PESO BAJO"
             };
-            return res.status(200).json(response);
+            // return res.status(200).json(response)
         }
         if (IMC >= 18.6 && IMC <= 24.90) {
             response = {
@@ -115,7 +110,7 @@ router.post("/imc", (req, res) => __awaiter(void 0, void 0, void 0, function* ()
                 IMC: IMC,
                 message: "NIVEL DE PESO NORMAL"
             };
-            return res.status(200).json(response);
+            // return res.status(200).json(response)
         }
         if (IMC >= 25.0 && IMC <= 29.90) {
             response = {
@@ -123,7 +118,7 @@ router.post("/imc", (req, res) => __awaiter(void 0, void 0, void 0, function* ()
                 IMC: IMC,
                 message: "SOBREPESO"
             };
-            return res.status(200).json(response);
+            // return res.status(200).json(response)
         }
         if (IMC >= 30.0 && IMC <= 35.0) {
             response = {
@@ -131,7 +126,7 @@ router.post("/imc", (req, res) => __awaiter(void 0, void 0, void 0, function* ()
                 IMC: IMC,
                 message: "OBESIDAD NIVEL 1"
             };
-            return res.status(200).json(response);
+            // return res.status(200).json(response)
         }
         if (IMC >= 35.1 && IMC <= 40.0) {
             response = {
@@ -139,7 +134,7 @@ router.post("/imc", (req, res) => __awaiter(void 0, void 0, void 0, function* ()
                 IMC: IMC,
                 message: "OBESIDAD NIVEL 2"
             };
-            return res.status(200).json(response);
+            //return res.status(200).json(response)
         }
         if (IMC > 40.1) {
             response = {
@@ -147,23 +142,18 @@ router.post("/imc", (req, res) => __awaiter(void 0, void 0, void 0, function* ()
                 IMC: IMC,
                 message: "OBESIDAD NIVEL 3"
             };
-            const dataIMC = {
-                dateOfCreated: new Date(new Date().toISOString()),
-                cantImc: IMC
-            };
-            const listIMC = [];
-            listIMC.push(dataIMC);
-            const certificates = {
-                imc: listIMC
-            };
-            const newRecord = yield (0, SaludServices_1.saveRecords)(email, certificates);
-            const resp = {
-                message: response,
-                data: newRecord,
-                status: "success"
-            };
-            return res.status(200).json(resp);
         }
+        const dataIMC = {
+            dateOfCreated: new Date(new Date().toISOString()),
+            cantImc: IMC
+        };
+        const newRecord = yield (0, SaludServices_1.saveRecordsIMC)(email, dataIMC);
+        const resp = {
+            message: response,
+            data: newRecord,
+            status: "success"
+        };
+        return res.status(200).json(resp);
     }
     catch (error) {
         const respErr = {
@@ -188,7 +178,7 @@ router.post("/presionarterial", (req, res) => __awaiter(void 0, void 0, void 0, 
                 status: 200,
                 message: respuestaMedica
             };
-            return res.status(200).json(response);
+            // return  res.status(200).json(response)
         }
         if ((presionBaja >= 80 && presionBaja < 120) && (presionAlta >= 60 && presionAlta < 80)) {
             respuestaMedica = "PRESION ARTERIAL NORMAL";
@@ -197,7 +187,7 @@ router.post("/presionarterial", (req, res) => __awaiter(void 0, void 0, void 0, 
                 status: 200,
                 message: respuestaMedica
             };
-            return res.status(200).json(response);
+            // return    res.status(200).json(response)
         }
         if ((presionBaja >= 130 && presionBaja < 140) && (presionAlta >= 85 && presionAlta < 90)) {
             respuestaMedica = "PRESION ARTERIAL NORMAL ALTA";
@@ -206,7 +196,7 @@ router.post("/presionarterial", (req, res) => __awaiter(void 0, void 0, void 0, 
                 status: 200,
                 message: respuestaMedica
             };
-            return res.status(200).json(response);
+            // return    res.status(200).json(response)
         }
         if ((presionBaja >= 140 && presionBaja < 160) && (presionAlta >= 90 && presionAlta < 100)) {
             respuestaMedica = "PRESION ARTERIAL  ALTA LEVE";
@@ -215,7 +205,7 @@ router.post("/presionarterial", (req, res) => __awaiter(void 0, void 0, void 0, 
                 status: 200,
                 message: respuestaMedica
             };
-            return res.status(200).json(response);
+            // return    res.status(200).json(response)
         }
         if ((presionBaja >= 160 && presionBaja < 180) && (presionAlta >= 100 && presionAlta < 110)) {
             respuestaMedica = "PRESION ARTERIAL  ALTA MODERADA";
@@ -224,7 +214,7 @@ router.post("/presionarterial", (req, res) => __awaiter(void 0, void 0, void 0, 
                 status: 200,
                 message: respuestaMedica
             };
-            return res.status(200).json(response);
+            // return    res.status(200).json(response)
         }
         if (presionBaja >= 180 && presionAlta >= 110) {
             respuestaMedica = "PRESION ARTERIAL  ALTA CRITICA";
@@ -233,24 +223,19 @@ router.post("/presionarterial", (req, res) => __awaiter(void 0, void 0, void 0, 
                 status: 200,
                 message: respuestaMedica
             };
-            const dataPresion = {
-                dateOfCreated: new Date(new Date().toISOString()),
-                registroPresionAlta: presionAlta,
-                registroPresionBaja: presionBaja
-            };
-            const listPresion = [];
-            listPresion.push(dataPresion);
-            const certificates = {
-                presion: listPresion
-            };
-            const newRecord = yield (0, SaludServices_1.saveRecords)(email, certificates);
-            const resp = {
-                message: response,
-                data: newRecord,
-                status: "success"
-            };
-            return res.status(200).json(resp);
         }
+        const dataPresion = {
+            dateOfCreated: new Date(new Date().toISOString()),
+            registroPresionAlta: presionAlta,
+            registroPresionBaja: presionBaja
+        };
+        const newRecord = yield (0, SaludServices_1.saveRecordsPresion)(email, dataPresion);
+        const resp = {
+            message: response,
+            data: newRecord,
+            status: "success"
+        };
+        return res.status(200).json(resp);
     }
     catch (error) {
         const respErr = {

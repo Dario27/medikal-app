@@ -3,12 +3,12 @@ import { ICertificate } from '../model/Certificates'
 
 export interface IRecords extends Document {     
     userID       : String
-    certificates : Array<ICertificate>
+    certificates : ICertificate
 }
 
 const recordsSchema: Schema = new Schema({ 
     userID    : String,
-    certificates : Array
+    certificates : Object
 })
 
 // Note: OverwriteModelError: Cannot overwrite `Records` model once compiled. error

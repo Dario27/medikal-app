@@ -40,6 +40,7 @@ const express_1 = require("express");
 const UserServices_1 = require("../../services/UserServices");
 const Utils_1 = require("../../Utils/Utils");
 const jsonwebtoken = __importStar(require("jsonwebtoken"));
+const Records_1 = require("../../model/Records");
 //import Mail from "nodemailer/lib/mailer";
 const router = (0, express_1.Router)();
 router.post("/create", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -74,6 +75,16 @@ router.post("/create", (req, res) => __awaiter(void 0, void 0, void 0, function*
             bloodType: bloodType,
             gender: genre
         };
+        const certificates = {
+            glucemia: [],
+            imc: [],
+            presion: []
+        };
+        const records = {
+            userID: email,
+            certificates: certificates
+        };
+        yield Records_1.Records.create(records);
         const foundUsers = yield (0, UserServices_1.findOneAndVerify)(_email);
         if (foundUsers === null) {
             //console.log("data users: ", userData)
@@ -108,20 +119,6 @@ router.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* 
         console.log("email ", email);
         const encryptSecretKey = config_1.default.get("key");
         console.log("encryptSecretKey =>", encryptSecretKey);
-        /* const dataEnc = encrypt(password, encryptSecretKey)
-        console.log("dataEnc =>", dataEnc) */
-        /* const arrayToken = apiKey.split(' ')[1]
-        console.log("arrayToken =>", arrayToken)
-        const tokenValid = arrayToken */
-        var err = null;
-        //console.log("keysecret => ", config.get("jwtSecret"))
-        /* const verify = jsonwebtoken.verify(tokenValid, config.get("jwtSecret"), (errorToken:any) =>{
-            console.log("errorToken", errorToken)
-            if(errorToken) {
-                err = errorToken
-                return res.json({ status:"forbidden", message:"token caducado"})
-            }
-        }) */
         const foundUser = yield (0, UserServices_1.findOneAndVerify)(email);
         console.log("users =>", foundUser);
         if (foundUser !== null) {
