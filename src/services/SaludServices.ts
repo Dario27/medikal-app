@@ -1,31 +1,18 @@
 import { Records, IRecords } from "../model/Records";
-import { ICertificate, Certificates } from "../model/Certificates"
-import  { Firebase } from "../../config/firebase"
+import { ICertificate } from "../model/Certificates"
+import { IGlucemia } from "../model/IGlucemia";
+import  { IMasa } from "../model/IMasa";
+import { IPresion } from "../model/Ipresion";
 
-export const saveRecords = async (email:any, certificates:ICertificate) => {
-    const firebase = new Firebase()
+export const saveRecordsGlucemia = async (email:any, dataGlucemia:IGlucemia) => {
+
     try {
-        
-        const listCertificate = []
-        listCertificate.push(certificates)
-
-        //await Certificates.create(certificates)
-        const records:IRecords = {
-            userID : email,
-            certificates : listCertificate
-        }
-
-        /* const api = 'BBhMdg1jsx90NgDBRY4pa89llR0AOAjk50q5RboBG1J45OaEORhm7RwW41GsS76Ai5BsiWd6MjRvqYXEV5tnjeM'        
-        const app = firebase.runFirebase()
-        await firebase.getTokenMessaging(app, api) */
-        
         var res = null
         const { isPacient, data} = await existsPacient(email)
-        if(!isPacient){
-            res = await Records.create(records)
-        }else{
-            const listCertificate = data.certificates.concat(certificates)
-            const updateCertificate:IRecords = await Records.findOneAndUpdate({"userID": email},{$set:{"certificates":listCertificate}},{new:true})
+        if(isPacient){ 
+            const listCertificate = data.certificates.glucemia.concat(dataGlucemia)
+            console.log("listCertificate => ", listCertificate)
+            const updateCertificate:IRecords = await Records.findOneAndUpdate({"userID": email},{$set:{"certificates.glucemia":listCertificate}},{new:true})
             res = updateCertificate
         }
         
@@ -39,6 +26,7 @@ export const saveRecords = async (email:any, certificates:ICertificate) => {
 export const existsPacient = async (email:any) => {
     try {
         const dataPac = await Records.findOne({ "userID": email})
+        console.log("data=> ", dataPac)
         if (dataPac != null){
             return { isPacient: true, data:dataPac}
         }else{
@@ -47,4 +35,40 @@ export const existsPacient = async (email:any) => {
     } catch (error) {
         return error.message
     }    
+}
+
+export const createRecords = async (records: IRecords)=>{
+    return await  Records.create(records)
+}
+
+export const saveRecordsIMC = async (email:any, dataIMC:IMasa) => {
+   try {
+        var res = null
+        const { isPacient, data} = await existsPacient(email)
+        if(isPacient){
+            const listCertificate = data.certificates.imc.concat(dataIMC)
+            console.log("listCertificate => ", listCertificate)
+            const updateCertificate:IRecords = await Records.findOneAndUpdate({"userID": email},{$set:{"certificates.imc":listCertificate}},{new:true})
+            res = updateCertificate
+        }
+        return res
+   } catch (error) {
+    return error.message
+   }    
+}
+
+export const saveRecordsPresion = async (email:any, dataPresion:IPresion)=>{
+    try {
+        var res = null
+        const { isPacient, data} = await existsPacient(email)
+        if(isPacient){
+            const listCertificate = data.certificates.presion.concat(dataPresion)
+            console.log("listCertificate => ", listCertificate)
+            const updateCertificate:IRecords = await Records.findOneAndUpdate({"userID": email},{$set:{"certificates.presion":listCertificate}},{new:true})
+            res = updateCertificate
+        }
+        return res
+    } catch (error) {
+        return error.message
+    }
 }

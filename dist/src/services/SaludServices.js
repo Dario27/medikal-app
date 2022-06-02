@@ -9,30 +9,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.existsPacient = exports.saveRecords = void 0;
+exports.saveRecordsPresion = exports.saveRecordsIMC = exports.createRecords = exports.existsPacient = exports.saveRecordsGlucemia = void 0;
 const Records_1 = require("../model/Records");
-const firebase_1 = require("../../config/firebase");
-const saveRecords = (email, certificates) => __awaiter(void 0, void 0, void 0, function* () {
-    const firebase = new firebase_1.Firebase();
+const saveRecordsGlucemia = (email, dataGlucemia) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const listCertificate = [];
-        listCertificate.push(certificates);
-        //await Certificates.create(certificates)
-        const records = {
-            userID: email,
-            certificates: listCertificate
-        };
-        /* const api = 'BBhMdg1jsx90NgDBRY4pa89llR0AOAjk50q5RboBG1J45OaEORhm7RwW41GsS76Ai5BsiWd6MjRvqYXEV5tnjeM'
-        const app = firebase.runFirebase()
-        await firebase.getTokenMessaging(app, api) */
         var res = null;
         const { isPacient, data } = yield (0, exports.existsPacient)(email);
-        if (!isPacient) {
-            res = yield Records_1.Records.create(records);
-        }
-        else {
-            const listCertificate = data.certificates.concat(certificates);
-            const updateCertificate = yield Records_1.Records.findOneAndUpdate({ "userID": email }, { $set: { "certificates": listCertificate } }, { new: true });
+        if (isPacient) {
+            const listCertificate = data.certificates.glucemia.concat(dataGlucemia);
+            console.log("listCertificate => ", listCertificate);
+            const updateCertificate = yield Records_1.Records.findOneAndUpdate({ "userID": email }, { $set: { "certificates.glucemia": listCertificate } }, { new: true });
             res = updateCertificate;
         }
         console.log("res ", res);
@@ -42,10 +28,11 @@ const saveRecords = (email, certificates) => __awaiter(void 0, void 0, void 0, f
         return error.message;
     }
 });
-exports.saveRecords = saveRecords;
+exports.saveRecordsGlucemia = saveRecordsGlucemia;
 const existsPacient = (email) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const dataPac = yield Records_1.Records.findOne({ "userID": email });
+        console.log("data=> ", dataPac);
         if (dataPac != null) {
             return { isPacient: true, data: dataPac };
         }
@@ -58,4 +45,42 @@ const existsPacient = (email) => __awaiter(void 0, void 0, void 0, function* () 
     }
 });
 exports.existsPacient = existsPacient;
+const createRecords = (records) => __awaiter(void 0, void 0, void 0, function* () {
+    return yield Records_1.Records.create(records);
+});
+exports.createRecords = createRecords;
+const saveRecordsIMC = (email, dataIMC) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        var res = null;
+        const { isPacient, data } = yield (0, exports.existsPacient)(email);
+        if (isPacient) {
+            const listCertificate = data.certificates.imc.concat(dataIMC);
+            console.log("listCertificate => ", listCertificate);
+            const updateCertificate = yield Records_1.Records.findOneAndUpdate({ "userID": email }, { $set: { "certificates.imc": listCertificate } }, { new: true });
+            res = updateCertificate;
+        }
+        return res;
+    }
+    catch (error) {
+        return error.message;
+    }
+});
+exports.saveRecordsIMC = saveRecordsIMC;
+const saveRecordsPresion = (email, dataPresion) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        var res = null;
+        const { isPacient, data } = yield (0, exports.existsPacient)(email);
+        if (isPacient) {
+            const listCertificate = data.certificates.presion.concat(dataPresion);
+            console.log("listCertificate => ", listCertificate);
+            const updateCertificate = yield Records_1.Records.findOneAndUpdate({ "userID": email }, { $set: { "certificates.presion": listCertificate } }, { new: true });
+            res = updateCertificate;
+        }
+        return res;
+    }
+    catch (error) {
+        return error.message;
+    }
+});
+exports.saveRecordsPresion = saveRecordsPresion;
 //# sourceMappingURL=SaludServices.js.map

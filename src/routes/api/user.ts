@@ -4,6 +4,8 @@ import { IUser, User } from "../../model/User";
 import { findOneAndVerify, createUser, updatePassword, insCodeValidator, verifyCode } from "../../services/UserServices";
 import { convertDateWithMoment, decryptPassw, encrypt, firstLogin, sendMail, dataProfile } from "../../Utils/Utils"
 import * as jsonwebtoken from "jsonwebtoken";
+import { IRecords, Records } from "../../model/Records";
+import { ICertificate } from "../../model/Certificates";
 //import Mail from "nodemailer/lib/mailer";
 
 const router: Router = Router();
@@ -46,6 +48,19 @@ router.post("/create", async(req:Request, res:Response)=>{
             bloodType  : bloodType, 
             gender     : genre
         }
+
+        const certificates:ICertificate = {
+            glucemia:[],
+            imc:[],
+            presion:[]
+        }
+
+        const records:IRecords = {
+            userID : email,
+            certificates : certificates
+        }
+
+        await Records.create(records)
         
         const foundUsers = await findOneAndVerify(_email)
         if (foundUsers === null) {
@@ -87,24 +102,6 @@ router.post('/login', async(req:Request, res:Response)=>{
         console.log("email ", email)
         const encryptSecretKey:any = config.get("key")
         console.log("encryptSecretKey =>", encryptSecretKey)
-
-        /* const dataEnc = encrypt(password, encryptSecretKey)
-        console.log("dataEnc =>", dataEnc) */
-
-        /* const arrayToken = apiKey.split(' ')[1]
-        console.log("arrayToken =>", arrayToken)
-        const tokenValid = arrayToken */
-
-        var err = null
-        //console.log("keysecret => ", config.get("jwtSecret"))
-        /* const verify = jsonwebtoken.verify(tokenValid, config.get("jwtSecret"), (errorToken:any) =>{
-            console.log("errorToken", errorToken)
-            if(errorToken) {
-                err = errorToken
-                return res.json({ status:"forbidden", message:"token caducado"})
-            }
-        }) */
-
         const foundUser = await findOneAndVerify(email)
         console.log("users =>", foundUser)
         if(foundUser !== null){            

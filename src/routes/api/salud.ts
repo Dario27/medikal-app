@@ -1,6 +1,6 @@
 
 import { Router, Response, Request } from "express";
-import { saveRecords } from "./../../services/SaludServices";
+import { saveRecordsGlucemia, saveRecordsIMC, saveRecordsPresion } from "./../../services/SaludServices";
 import { ICertificate } from "./../../model/Certificates";
 import { TypePeriodGlu } from "./../../model/Interfaces/TypePeriodGlu";
 import { calcularIMCPaciente } from "../../Utils/Utils";
@@ -73,14 +73,7 @@ router.post("/glucemia", async(req:Request, res:Response)=>{
             cantGlucemia : registro_glucemia
         }
 
-        const listGlucemia = []
-        listGlucemia.push(dataGlucemia)
-
-        const certificates:ICertificate = {    
-            glucemia : listGlucemia
-        }
-
-        const newRecord = await saveRecords(email, certificates)
+       const newRecord = await saveRecordsGlucemia(email, dataGlucemia)
 
         const resp = {
             message: respuesta,
@@ -110,13 +103,13 @@ router.post("/imc", async(req:Request, res:Response)=>{
 
         const IMC = calcularIMCPaciente(estatura, peso)
 
-        if (IMC <=16) {            
+        if (IMC <=16) {
             response = {
                 status : "success",
                 IMC : IMC,
                 message : "NIVEL DE PESO BAJO SEVERO"
             }
-            return res.status(200).json(response)
+           // return res.status(200).json(response)
         }
 
         if (IMC <=18.5 && IMC <= 18.50) {            
@@ -125,7 +118,7 @@ router.post("/imc", async(req:Request, res:Response)=>{
                 IMC : IMC,
                 message : "NIVEL DE PESO BAJO"
             }
-            return res.status(200).json(response)
+           // return res.status(200).json(response)
         }
         if (IMC >=18.6 && IMC <= 24.90) {        
             response = {
@@ -133,7 +126,7 @@ router.post("/imc", async(req:Request, res:Response)=>{
                 IMC : IMC,
                 message : "NIVEL DE PESO NORMAL"
             }
-            return res.status(200).json(response)
+           // return res.status(200).json(response)
         }
         if (IMC >=25.0 && IMC <= 29.90) {
             response = {
@@ -141,7 +134,7 @@ router.post("/imc", async(req:Request, res:Response)=>{
                 IMC : IMC,
                 message : "SOBREPESO"
             }
-            return res.status(200).json(response)
+           // return res.status(200).json(response)
         }
         if (IMC >=30.0 && IMC <= 35.0) {
             response = {
@@ -149,7 +142,7 @@ router.post("/imc", async(req:Request, res:Response)=>{
                 IMC : IMC,
                 message : "OBESIDAD NIVEL 1"
             }
-            return res.status(200).json(response)
+           // return res.status(200).json(response)
         }
 
         if (IMC >=35.1 && IMC <= 40.0) {
@@ -158,7 +151,7 @@ router.post("/imc", async(req:Request, res:Response)=>{
                 IMC : IMC,
                 message : "OBESIDAD NIVEL 2"
             }
-            return res.status(200).json(response)
+            //return res.status(200).json(response)
         }
 
         if (IMC > 40.1) {
@@ -167,29 +160,22 @@ router.post("/imc", async(req:Request, res:Response)=>{
                 IMC : IMC,
                 message : "OBESIDAD NIVEL 3"
             }
-
-            const dataIMC : IMasa ={
-                dateOfCreated: new Date(new Date().toISOString()),
-                cantImc : IMC
-            }
-
-            const listIMC = []
-            listIMC.push(dataIMC)
-
-            const certificates:ICertificate = {    
-                imc : listIMC
-            }
-
-            const newRecord = await saveRecords(email, certificates)
-
-            const resp = {
-                message: response,
-                data: newRecord,
-                status: "success"
-            }
-
-            return res.status(200).json(resp)
         }
+
+        const dataIMC : IMasa ={
+            dateOfCreated: new Date(new Date().toISOString()),
+            cantImc : IMC
+        }
+
+        const newRecord = await saveRecordsIMC(email, dataIMC)
+
+        const resp = {
+            message: response,
+            data: newRecord,
+            status: "success"
+        }
+
+        return res.status(200).json(resp)
 
     } catch (error) {
         const respErr = {
@@ -216,7 +202,7 @@ router.post("/presionarterial", async(req:Request, res:Response)=>{
                 status: 200,
                 message: respuestaMedica
             }
-            return  res.status(200).json(response)
+           // return  res.status(200).json(response)
         }
         if ((presionBaja >= 80 && presionBaja < 120) && (presionAlta >= 60 && presionAlta < 80)){
             respuestaMedica = "PRESION ARTERIAL NORMAL"
@@ -225,7 +211,7 @@ router.post("/presionarterial", async(req:Request, res:Response)=>{
                 status: 200,
                 message: respuestaMedica
             }
-            return    res.status(200).json(response)
+           // return    res.status(200).json(response)
         }
 
         if ((presionBaja >= 130 && presionBaja < 140) && (presionAlta >= 85 && presionAlta < 90)){
@@ -235,7 +221,7 @@ router.post("/presionarterial", async(req:Request, res:Response)=>{
                 status: 200,
                 message: respuestaMedica
             }
-            return    res.status(200).json(response)
+           // return    res.status(200).json(response)
         }
 
         if ((presionBaja >= 140 && presionBaja < 160) && (presionAlta >= 90 && presionAlta < 100)){
@@ -245,7 +231,7 @@ router.post("/presionarterial", async(req:Request, res:Response)=>{
                 status: 200,
                 message: respuestaMedica
             }
-            return    res.status(200).json(response)
+           // return    res.status(200).json(response)
         }
 
         if ((presionBaja >= 160 && presionBaja < 180) && (presionAlta >= 100 && presionAlta < 110)){
@@ -255,7 +241,7 @@ router.post("/presionarterial", async(req:Request, res:Response)=>{
                 status: 200,
                 message: respuestaMedica
             }
-            return    res.status(200).json(response)
+           // return    res.status(200).json(response)
         }
 
         if(presionBaja >= 180 && presionAlta >= 110){
@@ -265,30 +251,22 @@ router.post("/presionarterial", async(req:Request, res:Response)=>{
                 status: 200,
                 message: respuestaMedica
             }
-
-            const dataPresion : IPresion ={
-                dateOfCreated: new Date(new Date().toISOString()),
-                registroPresionAlta : presionAlta,
-                registroPresionBaja:presionBaja
-            }
-
-            const listPresion = []
-            listPresion.push(dataPresion)
-
-            const certificates:ICertificate = {    
-                presion : listPresion
-            }
-
-            const newRecord = await saveRecords(email, certificates)
-
-            const resp = {
-                message: response,
-                data: newRecord,
-                status: "success"
-            }
-
-            return    res.status(200).json(resp)
         }
+
+        const dataPresion : IPresion ={
+            dateOfCreated: new Date(new Date().toISOString()),
+            registroPresionAlta : presionAlta,
+            registroPresionBaja:presionBaja
+        }
+        const newRecord = await saveRecordsPresion(email, dataPresion)
+
+        const resp = {
+            message: response,
+            data: newRecord,
+            status: "success"
+        }
+
+        return    res.status(200).json(resp)
 
     } catch (error ) {
         const respErr = {
