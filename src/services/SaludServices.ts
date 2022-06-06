@@ -72,3 +72,34 @@ export const saveRecordsPresion = async (email:any, dataPresion:IPresion)=>{
         return error.message
     }
 }
+
+export const findAllByIndicators = async (email:any)=>{
+    try {
+        const dataFound:Array<IRecords> = await Records.aggregate([
+            { 
+                $match:{ "userID": email}
+            }
+        ])
+        return dataFound
+    } catch (error) {
+        return error.message
+    }
+}
+
+export const findNewIdImc = async (email:any, typeIndicators:any)=>{
+    try {
+        var idNew = 0
+        const data = await Records.findOne({ "userID":email})
+
+        if (data.certificates.presion.length > 0) {
+            
+        }else{
+            idNew = 1
+        }
+        
+        return idNew
+
+    } catch (error) {
+        return error.message
+    }
+}

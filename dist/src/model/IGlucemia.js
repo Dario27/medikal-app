@@ -26,6 +26,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Glucemia = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
 const glucemiaSchema = new mongoose_1.Schema({
+    id: Number,
     dateOfCreated: {
         type: Date,
         default: Date.now

@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.saveRecordsPresion = exports.saveRecordsIMC = exports.createRecords = exports.existsPacient = exports.saveRecordsGlucemia = void 0;
+exports.findNewIdImc = exports.findAllByIndicators = exports.saveRecordsPresion = exports.saveRecordsIMC = exports.createRecords = exports.existsPacient = exports.saveRecordsGlucemia = void 0;
 const Records_1 = require("../model/Records");
 const saveRecordsGlucemia = (email, dataGlucemia) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -83,4 +83,34 @@ const saveRecordsPresion = (email, dataPresion) => __awaiter(void 0, void 0, voi
     }
 });
 exports.saveRecordsPresion = saveRecordsPresion;
+const findAllByIndicators = (email) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const dataFound = yield Records_1.Records.aggregate([
+            {
+                $match: { "userID": email }
+            }
+        ]);
+        return dataFound;
+    }
+    catch (error) {
+        return error.message;
+    }
+});
+exports.findAllByIndicators = findAllByIndicators;
+const findNewIdImc = (email, typeIndicators) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        var idNew = 0;
+        const data = yield Records_1.Records.findOne({ "userID": email });
+        if (data.certificates.presion.length > 0) {
+        }
+        else {
+            idNew = 1;
+        }
+        return idNew;
+    }
+    catch (error) {
+        return error.message;
+    }
+});
+exports.findNewIdImc = findNewIdImc;
 //# sourceMappingURL=SaludServices.js.map
