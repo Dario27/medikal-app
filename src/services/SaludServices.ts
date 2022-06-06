@@ -86,7 +86,7 @@ export const findAllByIndicators = async (ObjectId:any, params:any)=>{
                         $match:{ "userID": ObjectId}
                     }
                 ])
-                await Presion.aggregatePaginate(aggregate, options,function (err:any, result:AggregatePaginateResult<IMasa>) {
+                await Presion.aggregatePaginate(aggregate, options,function (err:any, result:AggregatePaginateResult<IPresion>) {
                     res = result;
                 });
                 break;
@@ -96,7 +96,7 @@ export const findAllByIndicators = async (ObjectId:any, params:any)=>{
                         $match:{ "userID": ObjectId}
                     }
                 ])
-                await Glucemia.aggregatePaginate(aggregate, options,function (err:any, result:AggregatePaginateResult<IMasa>) {
+                await Glucemia.aggregatePaginate(aggregate, options,function (err:any, result:AggregatePaginateResult<IGlucemia>) {
                     res = result;
                 });
                 break;
