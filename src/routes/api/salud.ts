@@ -21,8 +21,8 @@ router.get("/all", async(req:Request, res:Response)=>{
     const email = req.headers["email"]
     const params = {
          typeIndicators : req.query.type,
-         offset:parseInt(req.query.offset.toString()) || 1,
-         page: parseInt(req.query.page.toString()) || 1
+         offset:req.query.offset || 1,
+         page: req.query.page || 1
     }
     console.log("typeIndicators => ", params.typeIndicators)
     const dataAll  = await findAllByIndicators(await findUserById(email), params)
