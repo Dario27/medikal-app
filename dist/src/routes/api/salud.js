@@ -19,8 +19,8 @@ router.get("/all", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     const email = req.headers["email"];
     const params = {
         typeIndicators: req.query.type,
-        offset: parseInt(req.query.offset.toString()) || 1,
-        page: parseInt(req.query.page.toString()) || 1
+        offset: req.query.offset || 1,
+        page: req.query.page || 1
     };
     console.log("typeIndicators => ", params.typeIndicators);
     const dataAll = yield (0, SaludServices_1.findAllByIndicators)(yield (0, SaludServices_1.findUserById)(email), params);
