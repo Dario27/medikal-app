@@ -17,30 +17,14 @@ const TypeIndicators_1 = require("../../model/Interfaces/TypeIndicators");
 const router = (0, express_1.Router)();
 router.get("/all", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const email = req.headers["email"];
-    const typeIndicators = req.query.type;
-    var listaDataIndicators = [];
-    console.log("typeIndicators => ", typeIndicators);
-    const dataAll = yield (0, SaludServices_1.findAllByIndicators)(email);
-    switch (typeIndicators) {
-        case "imc":
-            yield dataAll.map((record, index) => __awaiter(void 0, void 0, void 0, function* () {
-                listaDataIndicators = record.certificates.imc;
-            }));
-            break;
-        case "presion":
-            yield dataAll.map((record, index) => __awaiter(void 0, void 0, void 0, function* () {
-                listaDataIndicators = record.certificates.presion;
-            }));
-            break;
-        case "glucemia":
-            yield dataAll.map((record, index) => __awaiter(void 0, void 0, void 0, function* () {
-                listaDataIndicators = record.certificates.glucemia;
-            }));
-            break;
-        default:
-            break;
-    }
-    res.status(200).json(listaDataIndicators);
+    const params = {
+        typeIndicators: req.query.type,
+        offset: parseInt(req.query.offset.toString()) || 1,
+        page: parseInt(req.query.page.toString()) || 1
+    };
+    console.log("typeIndicators => ", params.typeIndicators);
+    const dataAll = yield (0, SaludServices_1.findAllByIndicators)(yield (0, SaludServices_1.findUserById)(email), params);
+    res.status(200).json(dataAll);
 }));
 router.post("/glucemia", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const body = req.body;
@@ -88,11 +72,13 @@ router.post("/glucemia", (req, res) => __awaiter(void 0, void 0, void 0, functio
                 }
                 break;
         }
+        const { isPacient, data } = yield (0, SaludServices_1.existsPacient)(email);
         const dataGlucemia = {
             dateOfCreated: new Date(new Date().toISOString()),
-            cantGlucemia: registro_glucemia
+            cantGlucemia: registro_glucemia,
+            userID: data._id
         };
-        const newRecord = yield (0, SaludServices_1.saveRecordsGlucemia)(email, dataGlucemia);
+        const newRecord = yield (0, SaludServices_1.saveRecordsGlucemia)(dataGlucemia);
         const resp = {
             message: respuesta,
             data: newRecord,
@@ -172,14 +158,16 @@ router.post("/imc", (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             };
         }
         const id = yield (0, SaludServices_1.findNewIdImc)(email, TypeIndicators_1.TypeIndicators.sobrepeso);
+        const { isPacient, data } = yield (0, SaludServices_1.existsPacient)(email);
         const dataIMC = {
             id: id,
             dateOfCreated: new Date(new Date().toISOString()),
             cantImc: IMC,
             pesoReg: peso,
-            alturaReg: estatura
+            alturaReg: estatura,
+            userID: data._id
         };
-        const newRecord = yield (0, SaludServices_1.saveRecordsIMC)(email, dataIMC);
+        const newRecord = yield (0, SaludServices_1.saveRecordsIMC)(dataIMC);
         const resp = {
             message: response,
             data: newRecord,
@@ -256,12 +244,14 @@ router.post("/presionarterial", (req, res) => __awaiter(void 0, void 0, void 0, 
                 message: respuestaMedica
             };
         }
+        const { isPacient, data } = yield (0, SaludServices_1.existsPacient)(email);
         const dataPresion = {
             dateOfCreated: new Date(new Date().toISOString()),
             registroPresionAlta: presionAlta,
-            registroPresionBaja: presionBaja
+            registroPresionBaja: presionBaja,
+            userID: data._id
         };
-        const newRecord = yield (0, SaludServices_1.saveRecordsPresion)(email, dataPresion);
+        const newRecord = yield (0, SaludServices_1.saveRecordsPresion)(dataPresion);
         const resp = {
             message: response,
             data: newRecord,

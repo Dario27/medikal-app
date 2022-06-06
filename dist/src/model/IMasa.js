@@ -22,9 +22,13 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Imc = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
+const mongoose_aggregate_paginate_v2_1 = __importDefault(require("mongoose-aggregate-paginate-v2"));
 const imcSchema = new mongoose_1.Schema({
     id: Number,
     dateOfCreated: {
@@ -33,8 +37,14 @@ const imcSchema = new mongoose_1.Schema({
     },
     cantImc: Number,
     pesoReg: String,
-    alturaReg: String
+    alturaReg: String,
+    userID: {
+        type: mongoose_1.default.Schema.Types.ObjectId,
+        required: true,
+        ref: 'users'
+    }
 });
+imcSchema.plugin(mongoose_aggregate_paginate_v2_1.default);
 // Note: OverwriteModelError: Cannot overwrite `Certificates` model once compiled. error
 exports.Imc = (mongoose_1.default.models.imcrecords || mongoose_1.default.model('imcrecords', imcSchema, "imcrecords"));
 //# sourceMappingURL=IMasa.js.map

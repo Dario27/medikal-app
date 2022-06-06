@@ -1,22 +1,17 @@
 import { Records, IRecords } from "../model/Records";
 import { ICertificate } from "../model/Certificates"
-import { IGlucemia } from "../model/IGlucemia";
-import  { IMasa } from "../model/IMasa";
-import { IPresion } from "../model/Ipresion";
+import { Glucemia, IGlucemia } from "../model/IGlucemia";
+import  { IMasa, Imc } from "../model/IMasa";
+import { IPresion, Presion } from "../model/Ipresion";
+import { User } from "../model/User";
+import { AggregatePaginateResult } from "mongoose"
 
-export const saveRecordsGlucemia = async (email:any, dataGlucemia:IGlucemia) => {
+export const saveRecordsGlucemia = async (dataGlucemia:IGlucemia) => {
 
     try {
-        var res = null
-        const { isPacient, data} = await existsPacient(email)
-        if(isPacient){ 
-            const listCertificate = data.certificates.glucemia.concat(dataGlucemia)
-            console.log("listCertificate => ", listCertificate)
-            const updateCertificate:IRecords = await Records.findOneAndUpdate({"userID": email},{$set:{"certificates.glucemia":listCertificate}},{new:true})
-            res = updateCertificate
-        }
-        
-        console.log("res ", res)
+        const responseGlucemia:IGlucemia = await Glucemia.create(dataGlucemia)
+        const res = responseGlucemia        
+        //console.log("res ", res)
         return res
     } catch (error) {
        return error.message
@@ -25,7 +20,7 @@ export const saveRecordsGlucemia = async (email:any, dataGlucemia:IGlucemia) => 
 
 export const existsPacient = async (email:any) => {
     try {
-        const dataPac = await Records.findOne({ "userID": email})
+        const dataPac = await User.findOne({ "email": email})
         console.log("data=> ", dataPac)
         if (dataPac != null){
             return { isPacient: true, data:dataPac}
@@ -41,46 +36,91 @@ export const createRecords = async (records: IRecords)=>{
     return await  Records.create(records)
 }
 
-export const saveRecordsIMC = async (email:any, dataIMC:IMasa) => {
-   try {
-        var res = null
-        const { isPacient, data} = await existsPacient(email)
-        if(isPacient){
-            const listCertificate = data.certificates.imc.concat(dataIMC)
-            console.log("listCertificate => ", listCertificate)
-            const updateCertificate:IRecords = await Records.findOneAndUpdate({"userID": email},{$set:{"certificates.imc":listCertificate}},{new:true})
-            res = updateCertificate
-        }
+export const saveRecordsIMC = async (dataIMC:IMasa) => {
+   try {        
+        const responseMasa:IMasa = await Imc.create(dataIMC)
+       const res = responseMasa
         return res
    } catch (error) {
     return error.message
    }    
 }
 
-export const saveRecordsPresion = async (email:any, dataPresion:IPresion)=>{
+export const saveRecordsPresion = async (dataPresion:IPresion)=>{
     try {
-        var res = null
-        const { isPacient, data} = await existsPacient(email)
-        if(isPacient){
-            const listCertificate = data.certificates.presion.concat(dataPresion)
-            console.log("listCertificate => ", listCertificate)
-            const updateCertificate:IRecords = await Records.findOneAndUpdate({"userID": email},{$set:{"certificates.presion":listCertificate}},{new:true})
-            res = updateCertificate
-        }
+        const responsePresion:IPresion = await Presion.create(dataPresion)
+        const res = responsePresion
         return res
     } catch (error) {
         return error.message
     }
 }
 
-export const findAllByIndicators = async (email:any)=>{
+export const findAllByIndicators = async (ObjectId:any, params:any)=>{
     try {
-        const dataFound:Array<IRecords> = await Records.aggregate([
-            { 
-                $match:{ "userID": email}
-            }
-        ])
-        return dataFound
+            
+        const options = {
+            pagination : true, 
+            limit: 10 , 
+            page : params.page,
+            offset: params.offset
+        }
+
+        var res = null
+        var aggregate = null
+
+        switch (params.typeIndicators) {
+            case "imc":
+                aggregate = Imc.aggregate([
+                    { 
+                        $match:{ "userID": ObjectId}
+                    }
+                ])
+                await Imc.aggregatePaginate(aggregate, options,function (err:any, result:AggregatePaginateResult<IMasa>) {
+                    res = result;
+                });
+                break;
+            case "presion":
+                aggregate = Presion.aggregate([
+                    { 
+                        $match:{ "userID": ObjectId}
+                    }
+                ])
+                await Presion.aggregatePaginate(aggregate, options,function (err:any, result:AggregatePaginateResult<IMasa>) {
+                    res = result;
+                });
+                break;
+            case "glucemia":
+                aggregate = Glucemia.aggregate([
+                    { 
+                        $match:{ "userID": ObjectId}
+                    }
+                ])
+                await Glucemia.aggregatePaginate(aggregate, options,function (err:any, result:AggregatePaginateResult<IMasa>) {
+                    res = result;
+                });
+                break;
+
+            default:
+                res = {
+                    "message":"No existe indicador",
+                    "status":"fail"
+                }
+                break;
+        }
+
+        return res
+
+    } catch (error) {
+        return error.message
+    }
+}
+
+export const findUserById = async(email:any)=>{
+    try {
+        const resp = await User.findOne({ "email": email})
+        //console.log("data user => ", resp)
+        return resp._id
     } catch (error) {
         return error.message
     }

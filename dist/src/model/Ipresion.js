@@ -22,9 +22,13 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Presion = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
+const mongoose_aggregate_paginate_v2_1 = __importDefault(require("mongoose-aggregate-paginate-v2"));
 const presionSchema = new mongoose_1.Schema({
     id: Number,
     dateOfCreated: {
@@ -32,8 +36,14 @@ const presionSchema = new mongoose_1.Schema({
         default: Date.now
     },
     registroPresionAlta: Number,
-    registroPresionBaja: Number
+    registroPresionBaja: Number,
+    userID: {
+        type: mongoose_1.default.Schema.Types.ObjectId,
+        required: true,
+        ref: 'users'
+    }
 });
+presionSchema.plugin(mongoose_aggregate_paginate_v2_1.default);
 // Note: OverwriteModelError: Cannot overwrite `Certificates` model once compiled. error
 exports.Presion = (mongoose_1.default.models.presion || mongoose_1.default.model('presion', presionSchema, "presion"));
 //# sourceMappingURL=Ipresion.js.map
