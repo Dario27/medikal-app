@@ -13,7 +13,35 @@ const express_1 = require("express");
 const SaludServices_1 = require("./../../services/SaludServices");
 const TypePeriodGlu_1 = require("./../../model/Interfaces/TypePeriodGlu");
 const Utils_1 = require("../../Utils/Utils");
+const TypeIndicators_1 = require("../../model/Interfaces/TypeIndicators");
 const router = (0, express_1.Router)();
+router.get("/all", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const email = req.headers["email"];
+    const typeIndicators = req.query.type;
+    var listaDataIndicators = [];
+    console.log("typeIndicators => ", typeIndicators);
+    const dataAll = yield (0, SaludServices_1.findAllByIndicators)(email);
+    switch (typeIndicators) {
+        case "imc":
+            yield dataAll.map((record, index) => __awaiter(void 0, void 0, void 0, function* () {
+                listaDataIndicators = record.certificates.imc;
+            }));
+            break;
+        case "presion":
+            yield dataAll.map((record, index) => __awaiter(void 0, void 0, void 0, function* () {
+                listaDataIndicators = record.certificates.presion;
+            }));
+            break;
+        case "glucemia":
+            yield dataAll.map((record, index) => __awaiter(void 0, void 0, void 0, function* () {
+                listaDataIndicators = record.certificates.glucemia;
+            }));
+            break;
+        default:
+            break;
+    }
+    res.status(200).json(listaDataIndicators);
+}));
 router.post("/glucemia", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const body = req.body;
     const periodo = body.periodo;
@@ -143,9 +171,13 @@ router.post("/imc", (req, res) => __awaiter(void 0, void 0, void 0, function* ()
                 message: "OBESIDAD NIVEL 3"
             };
         }
+        const id = yield (0, SaludServices_1.findNewIdImc)(email, TypeIndicators_1.TypeIndicators.sobrepeso);
         const dataIMC = {
+            id: id,
             dateOfCreated: new Date(new Date().toISOString()),
-            cantImc: IMC
+            cantImc: IMC,
+            pesoReg: peso,
+            alturaReg: estatura
         };
         const newRecord = yield (0, SaludServices_1.saveRecordsIMC)(email, dataIMC);
         const resp = {

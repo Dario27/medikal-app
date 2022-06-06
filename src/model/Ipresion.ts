@@ -1,12 +1,14 @@
 import mongoose,{ Schema } from 'mongoose';
 
 export interface IPresion extends Document {
+    id                                : Number;
     dateOfCreated   : Date;
     registroPresionAlta  : Number;
     registroPresionBaja  : Number;
 }
 
 const presionSchema: Schema = new Schema({
+    id                                : Number,
     dateOfCreated : { 
         type: Date,
         default: Date.now

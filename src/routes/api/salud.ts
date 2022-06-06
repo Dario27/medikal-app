@@ -1,15 +1,49 @@
 
 import { Router, Response, Request } from "express";
-import { saveRecordsGlucemia, saveRecordsIMC, saveRecordsPresion } from "./../../services/SaludServices";
+import { findAllByIndicators, 
+    findNewIdImc, 
+    saveRecordsGlucemia,
+    saveRecordsIMC, 
+    saveRecordsPresion } from "./../../services/SaludServices";
 import { ICertificate } from "./../../model/Certificates";
 import { TypePeriodGlu } from "./../../model/Interfaces/TypePeriodGlu";
 import { calcularIMCPaciente } from "../../Utils/Utils";
 import { IGlucemia } from "../../model/IGlucemia";
 import { IMasa } from "../../model/IMasa";
 import { IPresion } from "../../model/Ipresion";
+import { IRecords } from "../../model/Records";
+import { TypeIndicators } from "../../model/Interfaces/TypeIndicators";
 
 const router: Router = Router();
 
+router.get("/all", async(req:Request, res:Response)=>{
+    const email = req.headers["email"]
+    const typeIndicators = req.query.type
+    var listaDataIndicators :any[] = [];
+    console.log("typeIndicators => ", typeIndicators)
+
+    const dataAll : Array<IRecords> = await findAllByIndicators(email)
+    switch (typeIndicators) {
+        case "imc":
+            await dataAll.map(async (record, index) => {
+                listaDataIndicators = record.certificates.imc
+            });
+            break;
+        case "presion":
+            await dataAll.map(async (record, index) => {
+                listaDataIndicators = record.certificates.presion
+            })
+            break;
+        case "glucemia":
+            await dataAll.map(async (record, index) => {
+                listaDataIndicators = record.certificates.glucemia
+            })
+            break;
+        default:
+            break;
+    }
+    res.status(200).json(listaDataIndicators)
+})
 
 router.post("/glucemia", async(req:Request, res:Response)=>{
     
@@ -162,9 +196,14 @@ router.post("/imc", async(req:Request, res:Response)=>{
             }
         }
 
+        const id = await findNewIdImc(email, TypeIndicators.sobrepeso)
+
         const dataIMC : IMasa ={
+            id:id,
             dateOfCreated: new Date(new Date().toISOString()),
-            cantImc : IMC
+            cantImc : IMC,
+            pesoReg : peso,
+            alturaReg:estatura
         }
 
         const newRecord = await saveRecordsIMC(email, dataIMC)

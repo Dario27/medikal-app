@@ -1,11 +1,13 @@
 import mongoose,{ Schema } from 'mongoose';
 
 export interface IGlucemia extends Document {
+    id                                : Number;
     dateOfCreated : Date;
-    cantGlucemia  : String;
+    cantGlucemia    : String;
 }
 
 const glucemiaSchema: Schema = new Schema({
+    id: Number,
     dateOfCreated : { 
         type: Date,
         default: Date.now

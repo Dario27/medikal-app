@@ -26,11 +26,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Imc = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
 const imcSchema = new mongoose_1.Schema({
+    id: Number,
     dateOfCreated: {
         type: Date,
         default: Date.now
     },
-    cantImc: Number
+    cantImc: Number,
+    pesoReg: String,
+    alturaReg: String
 });
 // Note: OverwriteModelError: Cannot overwrite `Certificates` model once compiled. error
 exports.Imc = (mongoose_1.default.models.imcrecords || mongoose_1.default.model('imcrecords', imcSchema, "imcrecords"));
