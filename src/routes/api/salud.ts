@@ -1,7 +1,8 @@
 
 import { Router, Response, Request } from "express";
-import { findAllByIndicators, 
+import { existsPacient, findAllByIndicators, 
     findNewIdImc, 
+    findUserById, 
     saveRecordsGlucemia,
     saveRecordsIMC, 
     saveRecordsPresion } from "./../../services/SaludServices";
@@ -18,31 +19,14 @@ const router: Router = Router();
 
 router.get("/all", async(req:Request, res:Response)=>{
     const email = req.headers["email"]
-    const typeIndicators = req.query.type
-    var listaDataIndicators :any[] = [];
-    console.log("typeIndicators => ", typeIndicators)
-
-    const dataAll : Array<IRecords> = await findAllByIndicators(email)
-    switch (typeIndicators) {
-        case "imc":
-            await dataAll.map(async (record, index) => {
-                listaDataIndicators = record.certificates.imc
-            });
-            break;
-        case "presion":
-            await dataAll.map(async (record, index) => {
-                listaDataIndicators = record.certificates.presion
-            })
-            break;
-        case "glucemia":
-            await dataAll.map(async (record, index) => {
-                listaDataIndicators = record.certificates.glucemia
-            })
-            break;
-        default:
-            break;
+    const params = {
+         typeIndicators : req.query.type,
+         offset:parseInt(req.query.offset.toString()) || 1,
+         page: parseInt(req.query.page.toString()) || 1
     }
-    res.status(200).json(listaDataIndicators)
+    console.log("typeIndicators => ", params.typeIndicators)
+    const dataAll  = await findAllByIndicators(await findUserById(email), params)
+    res.status(200).json(dataAll)
 })
 
 router.post("/glucemia", async(req:Request, res:Response)=>{
@@ -101,13 +85,16 @@ router.post("/glucemia", async(req:Request, res:Response)=>{
                 }
                 break
         }
+        
+        const { isPacient, data} = await existsPacient(email)
 
         const dataGlucemia : IGlucemia ={
             dateOfCreated: new Date(new Date().toISOString()),
-            cantGlucemia : registro_glucemia
+            cantGlucemia : registro_glucemia,
+            userID: data._id
         }
 
-       const newRecord = await saveRecordsGlucemia(email, dataGlucemia)
+       const newRecord = await saveRecordsGlucemia(dataGlucemia)
 
         const resp = {
             message: respuesta,
@@ -197,16 +184,18 @@ router.post("/imc", async(req:Request, res:Response)=>{
         }
 
         const id = await findNewIdImc(email, TypeIndicators.sobrepeso)
+        const { isPacient, data} = await existsPacient(email)
 
         const dataIMC : IMasa ={
             id:id,
             dateOfCreated: new Date(new Date().toISOString()),
             cantImc : IMC,
             pesoReg : peso,
-            alturaReg:estatura
+            alturaReg:estatura,
+            userID: data._id
         }
 
-        const newRecord = await saveRecordsIMC(email, dataIMC)
+        const newRecord = await saveRecordsIMC(dataIMC)
 
         const resp = {
             message: response,
@@ -292,12 +281,15 @@ router.post("/presionarterial", async(req:Request, res:Response)=>{
             }
         }
 
+        const { isPacient, data} = await existsPacient(email)
+
         const dataPresion : IPresion ={
             dateOfCreated: new Date(new Date().toISOString()),
             registroPresionAlta : presionAlta,
-            registroPresionBaja:presionBaja
+            registroPresionBaja:presionBaja,
+            userID: data._id
         }
-        const newRecord = await saveRecordsPresion(email, dataPresion)
+        const newRecord = await saveRecordsPresion(dataPresion)
 
         const resp = {
             message: response,

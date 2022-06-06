@@ -22,17 +22,27 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Glucemia = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
+const mongoose_aggregate_paginate_v2_1 = __importDefault(require("mongoose-aggregate-paginate-v2"));
 const glucemiaSchema = new mongoose_1.Schema({
     id: Number,
     dateOfCreated: {
         type: Date,
         default: Date.now
     },
-    cantGlucemia: String
+    cantGlucemia: String,
+    userID: {
+        type: mongoose_1.default.Schema.Types.ObjectId,
+        required: true,
+        ref: 'users'
+    }
 });
+glucemiaSchema.plugin(mongoose_aggregate_paginate_v2_1.default);
 // Note: OverwriteModelError: Cannot overwrite `Certificates` model once compiled. error
 exports.Glucemia = (mongoose_1.default.models.glucemia || mongoose_1.default.model('glucemia', glucemiaSchema, "glucemia"));
 //# sourceMappingURL=IGlucemia.js.map

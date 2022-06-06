@@ -9,19 +9,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.findNewIdImc = exports.findAllByIndicators = exports.saveRecordsPresion = exports.saveRecordsIMC = exports.createRecords = exports.existsPacient = exports.saveRecordsGlucemia = void 0;
+exports.findNewIdImc = exports.findUserById = exports.findAllByIndicators = exports.saveRecordsPresion = exports.saveRecordsIMC = exports.createRecords = exports.existsPacient = exports.saveRecordsGlucemia = void 0;
 const Records_1 = require("../model/Records");
-const saveRecordsGlucemia = (email, dataGlucemia) => __awaiter(void 0, void 0, void 0, function* () {
+const IGlucemia_1 = require("../model/IGlucemia");
+const IMasa_1 = require("../model/IMasa");
+const Ipresion_1 = require("../model/Ipresion");
+const User_1 = require("../model/User");
+const saveRecordsGlucemia = (dataGlucemia) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        var res = null;
-        const { isPacient, data } = yield (0, exports.existsPacient)(email);
-        if (isPacient) {
-            const listCertificate = data.certificates.glucemia.concat(dataGlucemia);
-            console.log("listCertificate => ", listCertificate);
-            const updateCertificate = yield Records_1.Records.findOneAndUpdate({ "userID": email }, { $set: { "certificates.glucemia": listCertificate } }, { new: true });
-            res = updateCertificate;
-        }
-        console.log("res ", res);
+        const responseGlucemia = yield IGlucemia_1.Glucemia.create(dataGlucemia);
+        const res = responseGlucemia;
+        //console.log("res ", res)
         return res;
     }
     catch (error) {
@@ -31,7 +29,7 @@ const saveRecordsGlucemia = (email, dataGlucemia) => __awaiter(void 0, void 0, v
 exports.saveRecordsGlucemia = saveRecordsGlucemia;
 const existsPacient = (email) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const dataPac = yield Records_1.Records.findOne({ "userID": email });
+        const dataPac = yield User_1.User.findOne({ "email": email });
         console.log("data=> ", dataPac);
         if (dataPac != null) {
             return { isPacient: true, data: dataPac };
@@ -49,16 +47,10 @@ const createRecords = (records) => __awaiter(void 0, void 0, void 0, function* (
     return yield Records_1.Records.create(records);
 });
 exports.createRecords = createRecords;
-const saveRecordsIMC = (email, dataIMC) => __awaiter(void 0, void 0, void 0, function* () {
+const saveRecordsIMC = (dataIMC) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        var res = null;
-        const { isPacient, data } = yield (0, exports.existsPacient)(email);
-        if (isPacient) {
-            const listCertificate = data.certificates.imc.concat(dataIMC);
-            console.log("listCertificate => ", listCertificate);
-            const updateCertificate = yield Records_1.Records.findOneAndUpdate({ "userID": email }, { $set: { "certificates.imc": listCertificate } }, { new: true });
-            res = updateCertificate;
-        }
+        const responseMasa = yield IMasa_1.Imc.create(dataIMC);
+        const res = responseMasa;
         return res;
     }
     catch (error) {
@@ -66,16 +58,10 @@ const saveRecordsIMC = (email, dataIMC) => __awaiter(void 0, void 0, void 0, fun
     }
 });
 exports.saveRecordsIMC = saveRecordsIMC;
-const saveRecordsPresion = (email, dataPresion) => __awaiter(void 0, void 0, void 0, function* () {
+const saveRecordsPresion = (dataPresion) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        var res = null;
-        const { isPacient, data } = yield (0, exports.existsPacient)(email);
-        if (isPacient) {
-            const listCertificate = data.certificates.presion.concat(dataPresion);
-            console.log("listCertificate => ", listCertificate);
-            const updateCertificate = yield Records_1.Records.findOneAndUpdate({ "userID": email }, { $set: { "certificates.presion": listCertificate } }, { new: true });
-            res = updateCertificate;
-        }
+        const responsePresion = yield Ipresion_1.Presion.create(dataPresion);
+        const res = responsePresion;
         return res;
     }
     catch (error) {
@@ -83,20 +69,72 @@ const saveRecordsPresion = (email, dataPresion) => __awaiter(void 0, void 0, voi
     }
 });
 exports.saveRecordsPresion = saveRecordsPresion;
-const findAllByIndicators = (email) => __awaiter(void 0, void 0, void 0, function* () {
+const findAllByIndicators = (ObjectId, params) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const dataFound = yield Records_1.Records.aggregate([
-            {
-                $match: { "userID": email }
-            }
-        ]);
-        return dataFound;
+        const options = {
+            pagination: true,
+            limit: 10,
+            page: params.page,
+            offset: params.offset
+        };
+        var res = null;
+        var aggregate = null;
+        switch (params.typeIndicators) {
+            case "imc":
+                aggregate = IMasa_1.Imc.aggregate([
+                    {
+                        $match: { "userID": ObjectId }
+                    }
+                ]);
+                yield IMasa_1.Imc.aggregatePaginate(aggregate, options, function (err, result) {
+                    res = result;
+                });
+                break;
+            case "presion":
+                aggregate = Ipresion_1.Presion.aggregate([
+                    {
+                        $match: { "userID": ObjectId }
+                    }
+                ]);
+                yield Ipresion_1.Presion.aggregatePaginate(aggregate, options, function (err, result) {
+                    res = result;
+                });
+                break;
+            case "glucemia":
+                aggregate = IGlucemia_1.Glucemia.aggregate([
+                    {
+                        $match: { "userID": ObjectId }
+                    }
+                ]);
+                yield IGlucemia_1.Glucemia.aggregatePaginate(aggregate, options, function (err, result) {
+                    res = result;
+                });
+                break;
+            default:
+                res = {
+                    "message": "No existe indicador",
+                    "status": "fail"
+                };
+                break;
+        }
+        return res;
     }
     catch (error) {
         return error.message;
     }
 });
 exports.findAllByIndicators = findAllByIndicators;
+const findUserById = (email) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const resp = yield User_1.User.findOne({ "email": email });
+        //console.log("data user => ", resp)
+        return resp._id;
+    }
+    catch (error) {
+        return error.message;
+    }
+});
+exports.findUserById = findUserById;
 const findNewIdImc = (email, typeIndicators) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         var idNew = 0;
