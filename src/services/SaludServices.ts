@@ -95,6 +95,11 @@ export const findAllByIndicators = async (ObjectId:any, params:any)=>{
                 aggregate = Imc.aggregate([
                     { 
                         $match:{ "userID": ObjectId}
+                    },
+                    { 
+                        $sort: { 
+                            id: -1
+                        }
                     }
                 ])
                 await Imc.aggregatePaginate(aggregate, options,function (err:any, result:AggregatePaginateResult<IMasa>) {
@@ -105,6 +110,11 @@ export const findAllByIndicators = async (ObjectId:any, params:any)=>{
                 aggregate = Presion.aggregate([
                     { 
                         $match:{ "userID": ObjectId}
+                    },
+                    {
+                        $sort:{
+                            id:-1
+                        }
                     }
                 ])
                 await Presion.aggregatePaginate(aggregate, options,function (err:any, result:AggregatePaginateResult<IPresion>) {
@@ -115,6 +125,11 @@ export const findAllByIndicators = async (ObjectId:any, params:any)=>{
                 aggregate = Glucemia.aggregate([
                     { 
                         $match:{ "userID": ObjectId}
+                    },
+                    {
+                        $sort:{
+                            id:-1
+                        }
                     }
                 ])
                 await Glucemia.aggregatePaginate(aggregate, options,function (err:any, result:AggregatePaginateResult<IGlucemia>) {
