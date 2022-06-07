@@ -84,7 +84,7 @@ router.post("/glucemia", (req, res) => __awaiter(void 0, void 0, void 0, functio
         const dataGlucemia = {
             id: id,
             dateOfCreated: new Date(new Date().toISOString()),
-            cantGlucemia: registro_glucemia,
+            cantGlucemia: Number(registro_glucemia),
             userID: dataToken.userId
         };
         yield (0, SaludServices_1.saveRecordsGlucemia)(dataGlucemia);
@@ -171,11 +171,11 @@ router.post("/imc", (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             id: id,
             dateOfCreated: new Date(new Date().toISOString()),
             cantImc: IMC,
-            pesoReg: peso,
-            alturaReg: estatura,
+            pesoReg: Number(peso),
+            alturaReg: Number(estatura),
             userID: dataToken.userId
         };
-        const newRecord = yield (0, SaludServices_1.saveRecordsIMC)(dataIMC);
+        yield (0, SaludServices_1.saveRecordsIMC)(dataIMC); //graba la tabla en imcrecords
         const resp = {
             message: "success"
         };
@@ -257,8 +257,8 @@ router.post("/presionarterial", (req, res) => __awaiter(void 0, void 0, void 0, 
         const dataPresion = {
             id: id,
             dateOfCreated: new Date(new Date().toISOString()),
-            registroPresionAlta: presionAlta,
-            registroPresionBaja: presionBaja,
+            registroPresionAlta: Number(presionAlta),
+            registroPresionBaja: Number(presionBaja),
             userID: dataToken.userId
         };
         yield (0, SaludServices_1.saveRecordsPresion)(dataPresion);
