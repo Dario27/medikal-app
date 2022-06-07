@@ -14,6 +14,7 @@ const SaludServices_1 = require("./../../services/SaludServices");
 const TypePeriodGlu_1 = require("./../../model/Interfaces/TypePeriodGlu");
 const Utils_1 = require("../../Utils/Utils");
 const TypeIndicators_1 = require("../../model/Interfaces/TypeIndicators");
+const VerifyToken_1 = require("../../Utils/VerifyToken");
 const router = (0, express_1.Router)();
 router.get("/all", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const email = req.headers["email"];
@@ -30,7 +31,8 @@ router.post("/glucemia", (req, res) => __awaiter(void 0, void 0, void 0, functio
     const body = req.body;
     const periodo = body.periodo;
     const registro_glucemia = body.registro_glucemia;
-    const email = req.headers["email"];
+    const token = req.headers.authorization;
+    //const email = req.headers["email"]
     var respuesta = "";
     console.log("body ", body);
     try {
@@ -72,19 +74,19 @@ router.post("/glucemia", (req, res) => __awaiter(void 0, void 0, void 0, functio
                 }
                 break;
         }
-        const { isPacient, data } = yield (0, SaludServices_1.existsPacient)(email);
-        const id = yield (0, SaludServices_1.findNewIdImc)(data._id, TypeIndicators_1.TypeIndicators.glucemia);
+        const dataToken = yield (0, VerifyToken_1.verifyToken)(token);
+        //console.log("1.0 dataToken => ", dataToken)
+        //const { isPacient, data} = await existsPacient(dataToken)
+        const id = yield (0, SaludServices_1.findNewIdImc)(dataToken.userId, TypeIndicators_1.TypeIndicators.glucemia);
         const dataGlucemia = {
             id: id,
             dateOfCreated: new Date(new Date().toISOString()),
             cantGlucemia: registro_glucemia,
-            userID: data._id
+            userID: dataToken.userId
         };
-        const newRecord = yield (0, SaludServices_1.saveRecordsGlucemia)(dataGlucemia);
+        yield (0, SaludServices_1.saveRecordsGlucemia)(dataGlucemia);
         const resp = {
-            message: respuesta,
-            data: newRecord,
-            status: "success"
+            message: "success"
         };
         res.status(200).json(resp);
     }
@@ -100,7 +102,7 @@ router.post("/imc", (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     const body = req.body;
     const estatura = body.height;
     const peso = body.weight;
-    const email = req.headers["email"];
+    const token = req.headers.authorization;
     var response = null;
     try {
         const IMC = (0, Utils_1.calcularIMCPaciente)(estatura, peso);
@@ -159,21 +161,20 @@ router.post("/imc", (req, res) => __awaiter(void 0, void 0, void 0, function* ()
                 message: "OBESIDAD NIVEL 3"
             };
         }
-        const { isPacient, data } = yield (0, SaludServices_1.existsPacient)(email);
-        const id = yield (0, SaludServices_1.findNewIdImc)(data._id, TypeIndicators_1.TypeIndicators.sobrepeso);
+        const dataToken = yield (0, VerifyToken_1.verifyToken)(token);
+        //const { isPacient, data} = await existsPacient(dataToken)
+        const id = yield (0, SaludServices_1.findNewIdImc)(dataToken.userId, TypeIndicators_1.TypeIndicators.sobrepeso);
         const dataIMC = {
             id: id,
             dateOfCreated: new Date(new Date().toISOString()),
             cantImc: IMC,
             pesoReg: peso,
             alturaReg: estatura,
-            userID: data._id
+            userID: dataToken.userId
         };
         const newRecord = yield (0, SaludServices_1.saveRecordsIMC)(dataIMC);
         const resp = {
-            message: response,
-            data: newRecord,
-            status: "success"
+            message: "success"
         };
         return res.status(200).json(resp);
     }
@@ -189,7 +190,8 @@ router.post("/presionarterial", (req, res) => __awaiter(void 0, void 0, void 0, 
     const body = req.body;
     const presionAlta = body.alta;
     const presionBaja = body.baja;
-    const email = req.headers["email"];
+    const token = req.headers.authorization;
+    //const email = req.headers["email"]
     var respuestaMedica = "";
     var response = null;
     try {
@@ -246,20 +248,19 @@ router.post("/presionarterial", (req, res) => __awaiter(void 0, void 0, void 0, 
                 message: respuestaMedica
             };
         }
-        const { isPacient, data } = yield (0, SaludServices_1.existsPacient)(email);
-        const id = yield (0, SaludServices_1.findNewIdImc)(data._id, TypeIndicators_1.TypeIndicators.presionArterial);
+        const dataToken = yield (0, VerifyToken_1.verifyToken)(token);
+        //const { isPacient, data} = await existsPacient(dataToken)
+        const id = yield (0, SaludServices_1.findNewIdImc)(dataToken.userId, TypeIndicators_1.TypeIndicators.presionArterial);
         const dataPresion = {
             id: id,
             dateOfCreated: new Date(new Date().toISOString()),
             registroPresionAlta: presionAlta,
             registroPresionBaja: presionBaja,
-            userID: data._id
+            userID: dataToken.userId
         };
-        const newRecord = yield (0, SaludServices_1.saveRecordsPresion)(dataPresion);
+        yield (0, SaludServices_1.saveRecordsPresion)(dataPresion);
         const resp = {
-            message: response,
-            data: newRecord,
-            status: "success"
+            message: "success"
         };
         return res.status(200).json(resp);
     }
