@@ -4,7 +4,7 @@ import mongooseAggregatePaginate from 'mongoose-aggregate-paginate-v2';
 export interface IGlucemia extends Document {
     id                                : Number;
     dateOfCreated : Date;
-    cantGlucemia    : String;
+    cantGlucemia    : Number;
     userID                    : Object;
 }
 
@@ -14,7 +14,7 @@ const glucemiaSchema: Schema = new Schema({
         type: Date,
         default: Date.now
     },
-    cantGlucemia  : String,
+    cantGlucemia  : Number,
     userID :{
         type: mongoose.Schema.Types.ObjectId,
         required : true,
