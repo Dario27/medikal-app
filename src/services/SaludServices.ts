@@ -72,8 +72,7 @@ export const findAllByIndicators = async (ObjectId:any, params:any)=>{
             
         const options = {
             pagination : true, 
-            limit: 10 , 
-            page : params.page,
+            limit: params.limit , 
             offset: params.offset,
             customLabels :labelsCustom
         }
