@@ -28,7 +28,7 @@ router.get("/all", async(req:Request, res:Response)=>{
     }
     console.log("typeIndicators => ", params.typeIndicators)
     const dataToken = await verifyToken(token)
-    const dataAll  = await findAllByIndicators(dataToken.userId, params)
+    const dataAll  = await findAllByIndicators(await findUserById(dataToken.email), params)
     res.status(200).json(dataAll)
 })
 
