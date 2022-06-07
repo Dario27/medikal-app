@@ -17,14 +17,16 @@ const TypeIndicators_1 = require("../../model/Interfaces/TypeIndicators");
 const VerifyToken_1 = require("../../Utils/VerifyToken");
 const router = (0, express_1.Router)();
 router.get("/all", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const email = req.headers["email"];
+    const token = req.headers.authorization;
+    //const email = req.headers["email"]
     const params = {
         typeIndicators: req.query.type,
         offset: req.query.offset || 1,
-        page: req.query.page || 1
+        limit: req.query.limit || 10
     };
     console.log("typeIndicators => ", params.typeIndicators);
-    const dataAll = yield (0, SaludServices_1.findAllByIndicators)(yield (0, SaludServices_1.findUserById)(email), params);
+    const dataToken = yield (0, VerifyToken_1.verifyToken)(token);
+    const dataAll = yield (0, SaludServices_1.findAllByIndicators)(yield (0, SaludServices_1.findUserById)(dataToken.email), params);
     res.status(200).json(dataAll);
 }));
 router.post("/glucemia", (req, res) => __awaiter(void 0, void 0, void 0, function* () {

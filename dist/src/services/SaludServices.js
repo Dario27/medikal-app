@@ -83,8 +83,7 @@ const findAllByIndicators = (ObjectId, params) => __awaiter(void 0, void 0, void
         };
         const options = {
             pagination: true,
-            limit: 10,
-            page: params.page,
+            limit: params.limit,
             offset: params.offset,
             customLabels: labelsCustom
         };
