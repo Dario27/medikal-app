@@ -24,13 +24,9 @@ router.get("/all", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         offset: req.query.offset || 1,
         limit: req.query.limit || 10
     };
-    console.log("typeIndicators => ", params.typeIndicators);
+    //console.log("typeIndicators => ", params.typeIndicators)
     const dataToken = yield (0, VerifyToken_1.verifyToken)(token);
-<<<<<<< HEAD
-    const dataAll = yield (0, SaludServices_1.findAllByIndicators)(dataToken.userId, params);
-=======
     const dataAll = yield (0, SaludServices_1.findAllByIndicators)(yield (0, SaludServices_1.findUserById)(dataToken.email), params);
->>>>>>> dev
     res.status(200).json(dataAll);
 }));
 router.post("/glucemia", (req, res) => __awaiter(void 0, void 0, void 0, function* () {

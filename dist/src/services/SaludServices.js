@@ -89,6 +89,7 @@ const findAllByIndicators = (ObjectId, params) => __awaiter(void 0, void 0, void
         };
         var res = null;
         var aggregate = null;
+        console.log("opcion pagination => ", options);
         switch (params.typeIndicators) {
             case "imc":
                 aggregate = IMasa_1.Imc.aggregate([
