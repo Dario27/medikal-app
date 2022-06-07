@@ -81,10 +81,19 @@ const findAllByIndicators = (ObjectId, params) => __awaiter(void 0, void 0, void
             prevPage: 'prev',
             totalPages: 'totalPages',
         };
+        const _offset = params.offset;
+        var offset = null;
+        if (_offset > 1) {
+            offset = ((_offset - 1) * parseInt(params.limit.toString()));
+        }
+        else {
+            offset = 0;
+        }
         const options = {
             pagination: true,
             limit: params.limit,
-            offset: params.offset,
+            offset: offset,
+            page: params.page,
             customLabels: labelsCustom
         };
         var res = null;
