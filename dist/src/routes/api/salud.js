@@ -24,7 +24,7 @@ router.get("/all", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         offset: req.query.offset || 1,
         limit: req.query.limit || 10
     };
-    console.log("typeIndicators => ", params.typeIndicators);
+    //console.log("typeIndicators => ", params.typeIndicators)
     const dataToken = yield (0, VerifyToken_1.verifyToken)(token);
     const dataAll = yield (0, SaludServices_1.findAllByIndicators)(yield (0, SaludServices_1.findUserById)(dataToken.email), params);
     res.status(200).json(dataAll);
@@ -78,8 +78,8 @@ router.post("/glucemia", (req, res) => __awaiter(void 0, void 0, void 0, functio
         }
         const dataToken = yield (0, VerifyToken_1.verifyToken)(token);
         //console.log("1.0 dataToken => ", dataToken)
-        //const { isPacient, data} = await existsPacient(dataToken)
-        const id = yield (0, SaludServices_1.findNewIdImc)(dataToken.userId, TypeIndicators_1.TypeIndicators.glucemia);
+        const { isPacient, data } = yield (0, SaludServices_1.existsPacient)(dataToken.email);
+        const id = yield (0, SaludServices_1.findNewIdImc)(data._id, TypeIndicators_1.TypeIndicators.glucemia);
         const dataGlucemia = {
             id: id,
             dateOfCreated: new Date(new Date().toISOString()),
@@ -164,8 +164,8 @@ router.post("/imc", (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             };
         }
         const dataToken = yield (0, VerifyToken_1.verifyToken)(token);
-        //const { isPacient, data} = await existsPacient(dataToken)
-        const id = yield (0, SaludServices_1.findNewIdImc)(dataToken.userId, TypeIndicators_1.TypeIndicators.sobrepeso);
+        const { isPacient, data } = yield (0, SaludServices_1.existsPacient)(dataToken.email);
+        const id = yield (0, SaludServices_1.findNewIdImc)(data._id, TypeIndicators_1.TypeIndicators.sobrepeso);
         const dataIMC = {
             id: id,
             dateOfCreated: new Date(new Date().toISOString()),
@@ -251,8 +251,8 @@ router.post("/presionarterial", (req, res) => __awaiter(void 0, void 0, void 0, 
             };
         }
         const dataToken = yield (0, VerifyToken_1.verifyToken)(token);
-        //const { isPacient, data} = await existsPacient(dataToken)
-        const id = yield (0, SaludServices_1.findNewIdImc)(dataToken.userId, TypeIndicators_1.TypeIndicators.presionArterial);
+        const { isPacient, data } = yield (0, SaludServices_1.existsPacient)(dataToken.email);
+        const id = yield (0, SaludServices_1.findNewIdImc)(data._id, TypeIndicators_1.TypeIndicators.presionArterial);
         const dataPresion = {
             id: id,
             dateOfCreated: new Date(new Date().toISOString()),

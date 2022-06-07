@@ -89,6 +89,7 @@ const findAllByIndicators = (ObjectId, params) => __awaiter(void 0, void 0, void
         };
         var res = null;
         var aggregate = null;
+        console.log("opcion pagination => ", options);
         switch (params.typeIndicators) {
             case "imc":
                 aggregate = IMasa_1.Imc.aggregate([
@@ -189,6 +190,7 @@ const findNewIdImc = (ObjectId, typeIndicators) => __awaiter(void 0, void 0, voi
             default:
                 break;
         }
+        console.log("data new id =>", data);
         if (data.length > 0) {
             idNew = (data[0].id) + 1;
         }
