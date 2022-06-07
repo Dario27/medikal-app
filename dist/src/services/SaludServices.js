@@ -190,6 +190,7 @@ const findNewIdImc = (ObjectId, typeIndicators) => __awaiter(void 0, void 0, voi
             default:
                 break;
         }
+        console.log("data new id =>", data);
         if (data.length > 0) {
             idNew = (data[0].id) + 1;
         }
