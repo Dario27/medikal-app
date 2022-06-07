@@ -14,6 +14,7 @@ import { IMasa } from "../../model/IMasa";
 import { IPresion } from "../../model/Ipresion";
 import { IRecords } from "../../model/Records";
 import { TypeIndicators } from "../../model/Interfaces/TypeIndicators";
+import { verifyToken } from "../../Utils/VerifyToken";
 
 const router: Router = Router();
 
@@ -34,7 +35,8 @@ router.post("/glucemia", async(req:Request, res:Response)=>{
     const body = req.body;
     const periodo:string = body.periodo
     const registro_glucemia = body.registro_glucemia
-    const email = req.headers["email"]
+    const token: String = req.headers.authorization   
+    //const email = req.headers["email"]
     var respuesta = "";
 
     console.log("body ", body)
@@ -86,22 +88,22 @@ router.post("/glucemia", async(req:Request, res:Response)=>{
                 break
         }
 
-        const { isPacient, data} = await existsPacient(email)
-        const id = await findNewIdImc(data._id, TypeIndicators.glucemia)
+        const dataToken = await verifyToken(token)
+        //console.log("1.0 dataToken => ", dataToken)
+        //const { isPacient, data} = await existsPacient(dataToken)
+        const id = await findNewIdImc(dataToken.userId, TypeIndicators.glucemia)
         
         const dataGlucemia : IGlucemia ={
             id: id,
             dateOfCreated: new Date(new Date().toISOString()),
             cantGlucemia : registro_glucemia,
-            userID: data._id
+            userID: dataToken.userId
         }
 
-       const newRecord = await saveRecordsGlucemia(dataGlucemia)
+       await saveRecordsGlucemia(dataGlucemia)
 
         const resp = {
-            message: respuesta,
-            data: newRecord,
-            status: "success"
+            message: "success"
         }
         res.status(200).json(resp)
 
@@ -120,7 +122,7 @@ router.post("/imc", async(req:Request, res:Response)=>{
     const body = req.body;
     const estatura = body.height
     const peso = body.weight
-    const email = req.headers["email"]
+    const token: String = req.headers.authorization    
     var response = null
     try {
 
@@ -185,8 +187,9 @@ router.post("/imc", async(req:Request, res:Response)=>{
             }
         }
 
-        const { isPacient, data} = await existsPacient(email)
-        const id = await findNewIdImc(data._id, TypeIndicators.sobrepeso)
+        const dataToken = await verifyToken(token)
+        //const { isPacient, data} = await existsPacient(dataToken)
+        const id = await findNewIdImc(dataToken.userId, TypeIndicators.sobrepeso)
         
         const dataIMC : IMasa ={
             id:id,
@@ -194,15 +197,13 @@ router.post("/imc", async(req:Request, res:Response)=>{
             cantImc : IMC,
             pesoReg : peso,
             alturaReg:estatura,
-            userID: data._id
+            userID: dataToken.userId
         }
 
         const newRecord = await saveRecordsIMC(dataIMC)
 
         const resp = {
-            message: response,
-            data: newRecord,
-            status: "success"
+            message: "success"
         }
 
         return res.status(200).json(resp)
@@ -220,7 +221,8 @@ router.post("/presionarterial", async(req:Request, res:Response)=>{
     const body = req.body;
     const presionAlta = body.alta
     const presionBaja = body.baja
-    const email = req.headers["email"]
+    const token: String = req.headers.authorization   
+    //const email = req.headers["email"]
     var respuestaMedica = ""
     var response = null
     try {
@@ -283,23 +285,22 @@ router.post("/presionarterial", async(req:Request, res:Response)=>{
             }
         }
 
-        
-        const { isPacient, data} = await existsPacient(email)
-        const id = await findNewIdImc(data._id, TypeIndicators.presionArterial)
+        const dataToken = await verifyToken(token)
+        //const { isPacient, data} = await existsPacient(dataToken)
+        const id = await findNewIdImc(dataToken.userId, TypeIndicators.presionArterial)
 
         const dataPresion : IPresion ={
             id: id,
             dateOfCreated: new Date(new Date().toISOString()),
             registroPresionAlta : presionAlta,
             registroPresionBaja:presionBaja,
-            userID: data._id
+            userID: dataToken.userId
         }
-        const newRecord = await saveRecordsPresion(dataPresion)
+        
+        await saveRecordsPresion(dataPresion)
 
         const resp = {
-            message: response,
-            data: newRecord,
-            status: "success"
+            message:  "success"
         }
 
         return    res.status(200).json(resp)

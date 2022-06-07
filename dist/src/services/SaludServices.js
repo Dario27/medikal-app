@@ -29,6 +29,7 @@ const saveRecordsGlucemia = (dataGlucemia) => __awaiter(void 0, void 0, void 0, 
 exports.saveRecordsGlucemia = saveRecordsGlucemia;
 const existsPacient = (email) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        console.log(" email exists =>", email);
         const dataPac = yield User_1.User.findOne({ "email": email });
         console.log("data=> ", dataPac);
         if (dataPac != null) {
@@ -71,11 +72,21 @@ const saveRecordsPresion = (dataPresion) => __awaiter(void 0, void 0, void 0, fu
 exports.saveRecordsPresion = saveRecordsPresion;
 const findAllByIndicators = (ObjectId, params) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        const labelsCustom = {
+            totalDocs: 'total_size',
+            docs: params.typeIndicators,
+            limit: 'limit',
+            page: 'currentPage',
+            nextPage: 'next',
+            prevPage: 'prev',
+            totalPages: 'totalPages',
+        };
         const options = {
             pagination: true,
             limit: 10,
             page: params.page,
-            offset: params.offset
+            offset: params.offset,
+            customLabels: labelsCustom
         };
         var res = null;
         var aggregate = null;
