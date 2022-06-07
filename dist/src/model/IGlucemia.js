@@ -35,7 +35,7 @@ const glucemiaSchema = new mongoose_1.Schema({
         type: Date,
         default: Date.now
     },
-    cantGlucemia: String,
+    cantGlucemia: Number,
     userID: {
         type: mongoose_1.default.Schema.Types.ObjectId,
         required: true,

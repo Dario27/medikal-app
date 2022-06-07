@@ -104,6 +104,11 @@ const findAllByIndicators = (ObjectId, params) => __awaiter(void 0, void 0, void
                 aggregate = IMasa_1.Imc.aggregate([
                     {
                         $match: { "userID": ObjectId }
+                    },
+                    {
+                        $sort: {
+                            id: -1
+                        }
                     }
                 ]);
                 yield IMasa_1.Imc.aggregatePaginate(aggregate, options, function (err, result) {
@@ -114,6 +119,11 @@ const findAllByIndicators = (ObjectId, params) => __awaiter(void 0, void 0, void
                 aggregate = Ipresion_1.Presion.aggregate([
                     {
                         $match: { "userID": ObjectId }
+                    },
+                    {
+                        $sort: {
+                            id: -1
+                        }
                     }
                 ]);
                 yield Ipresion_1.Presion.aggregatePaginate(aggregate, options, function (err, result) {
@@ -124,6 +134,11 @@ const findAllByIndicators = (ObjectId, params) => __awaiter(void 0, void 0, void
                 aggregate = IGlucemia_1.Glucemia.aggregate([
                     {
                         $match: { "userID": ObjectId }
+                    },
+                    {
+                        $sort: {
+                            id: -1
+                        }
                     }
                 ]);
                 yield IGlucemia_1.Glucemia.aggregatePaginate(aggregate, options, function (err, result) {

@@ -203,7 +203,7 @@ router.post("/imc", async(req:Request, res:Response)=>{
             userID: dataToken.userId
         }
 
-        await saveRecordsIMC(dataIMC)
+        await saveRecordsIMC(dataIMC) //graba la tabla en imcrecords
 
         const resp = {
             message: "success"
