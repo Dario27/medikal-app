@@ -19,8 +19,8 @@ router.get("/all", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     const email = req.headers["email"];
     const params = {
         typeIndicators: req.query.type,
-        offset: parseInt(req.query.offset.toString()) || 1,
-        page: parseInt(req.query.page.toString()) || 1
+        offset: req.query.offset || 1,
+        page: req.query.page || 1
     };
     console.log("typeIndicators => ", params.typeIndicators);
     const dataAll = yield (0, SaludServices_1.findAllByIndicators)(yield (0, SaludServices_1.findUserById)(email), params);
@@ -73,7 +73,9 @@ router.post("/glucemia", (req, res) => __awaiter(void 0, void 0, void 0, functio
                 break;
         }
         const { isPacient, data } = yield (0, SaludServices_1.existsPacient)(email);
+        const id = yield (0, SaludServices_1.findNewIdImc)(data._id, TypeIndicators_1.TypeIndicators.glucemia);
         const dataGlucemia = {
+            id: id,
             dateOfCreated: new Date(new Date().toISOString()),
             cantGlucemia: registro_glucemia,
             userID: data._id
@@ -157,8 +159,8 @@ router.post("/imc", (req, res) => __awaiter(void 0, void 0, void 0, function* ()
                 message: "OBESIDAD NIVEL 3"
             };
         }
-        const id = yield (0, SaludServices_1.findNewIdImc)(email, TypeIndicators_1.TypeIndicators.sobrepeso);
         const { isPacient, data } = yield (0, SaludServices_1.existsPacient)(email);
+        const id = yield (0, SaludServices_1.findNewIdImc)(data._id, TypeIndicators_1.TypeIndicators.sobrepeso);
         const dataIMC = {
             id: id,
             dateOfCreated: new Date(new Date().toISOString()),
@@ -245,7 +247,9 @@ router.post("/presionarterial", (req, res) => __awaiter(void 0, void 0, void 0, 
             };
         }
         const { isPacient, data } = yield (0, SaludServices_1.existsPacient)(email);
+        const id = yield (0, SaludServices_1.findNewIdImc)(data._id, TypeIndicators_1.TypeIndicators.presionArterial);
         const dataPresion = {
+            id: id,
             dateOfCreated: new Date(new Date().toISOString()),
             registroPresionAlta: presionAlta,
             registroPresionBaja: presionBaja,

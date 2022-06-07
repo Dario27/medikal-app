@@ -135,11 +135,52 @@ const findUserById = (email) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.findUserById = findUserById;
-const findNewIdImc = (email, typeIndicators) => __awaiter(void 0, void 0, void 0, function* () {
+const findNewIdImc = (ObjectId, typeIndicators) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         var idNew = 0;
-        const data = yield Records_1.Records.findOne({ "userID": email });
-        if (data.certificates.presion.length > 0) {
+        var data = null;
+        switch (typeIndicators) {
+            case "imc":
+                data = yield IMasa_1.Imc.aggregate([
+                    {
+                        $match: { "userID": ObjectId }
+                    },
+                    {
+                        $sort: {
+                            id: -1
+                        }
+                    }
+                ]);
+                break;
+            case "glucemia":
+                data = yield IGlucemia_1.Glucemia.aggregate([
+                    {
+                        $match: { "userID": ObjectId }
+                    },
+                    {
+                        $sort: {
+                            id: -1
+                        }
+                    }
+                ]);
+                break;
+            case "presion":
+                data = yield Ipresion_1.Presion.aggregate([
+                    {
+                        $match: { "userID": ObjectId }
+                    },
+                    {
+                        $sort: {
+                            id: -1
+                        }
+                    }
+                ]);
+                break;
+            default:
+                break;
+        }
+        if (data.length > 0) {
+            idNew = (data[0].id) + 1;
         }
         else {
             idNew = 1;

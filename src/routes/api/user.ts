@@ -49,18 +49,18 @@ router.post("/create", async(req:Request, res:Response)=>{
             gender     : genre
         }
 
-        const certificates:ICertificate = {
+        /* const certificates:ICertificate = {
             glucemia:[],
             imc:[],
             presion:[]
-        }
+        } */
 
-        const records:IRecords = {
+        /* const records:IRecords = {
             userID : email,
             certificates : certificates
-        }
+        } */
 
-        await Records.create(records)
+        //await Records.create(records)
         
         const foundUsers = await findOneAndVerify(_email)
         if (foundUsers === null) {

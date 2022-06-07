@@ -126,13 +126,53 @@ export const findUserById = async(email:any)=>{
     }
 }
 
-export const findNewIdImc = async (email:any, typeIndicators:any)=>{
+export const findNewIdImc = async (ObjectId:any, typeIndicators:any)=>{
     try {
         var idNew = 0
-        const data = await Records.findOne({ "userID":email})
+        var data = null
+        switch (typeIndicators) {
+            case "imc":
+                data = await Imc.aggregate([
+                    { 
+                        $match: { "userID": ObjectId}
+                    },
+                    {
+                        $sort:{
+                            id:-1
+                        }
+                    }
+                ])
+                break;
+            case "glucemia":
+                data = await Glucemia.aggregate([
+                    { 
+                        $match: { "userID": ObjectId}
+                    },
+                    {
+                        $sort:{
+                            id:-1
+                        }
+                    }
+                ])
+                break;
+            case "presion":
+                data = await Presion.aggregate([
+                    { 
+                        $match: { "userID": ObjectId}
+                    },
+                    {
+                        $sort:{
+                            id:-1
+                        }
+                    }
+                ])
+                break;
+            default:
+                break;
+        }
 
-        if (data.certificates.presion.length > 0) {
-            
+        if (data.length > 0) {
+            idNew = (data[0].id)+1
         }else{
             idNew = 1
         }
