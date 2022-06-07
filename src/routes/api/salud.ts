@@ -24,7 +24,8 @@ router.get("/all", async(req:Request, res:Response)=>{
     const params = {
          typeIndicators : req.query.type,
          offset:req.query.offset || 1,
-         limit: req.query.limit || 10
+         limit: req.query.limit || 10,
+         page: req.query.page || 1
     }
     //console.log("typeIndicators => ", params.typeIndicators)
     const dataToken = await verifyToken(token)
