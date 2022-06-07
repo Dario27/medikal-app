@@ -99,7 +99,7 @@ router.post("/glucemia", async(req:Request, res:Response)=>{
         const dataGlucemia : IGlucemia ={
             id: id,
             dateOfCreated: new Date(new Date().toISOString()),
-            cantGlucemia : registro_glucemia,
+            cantGlucemia : Number(registro_glucemia),
             userID: dataToken.userId
         }
 
@@ -198,12 +198,12 @@ router.post("/imc", async(req:Request, res:Response)=>{
             id:id,
             dateOfCreated: new Date(new Date().toISOString()),
             cantImc : IMC,
-            pesoReg : peso,
-            alturaReg:estatura,
+            pesoReg : Number(peso),
+            alturaReg: Number(estatura),
             userID: dataToken.userId
         }
 
-        const newRecord = await saveRecordsIMC(dataIMC)
+        await saveRecordsIMC(dataIMC)
 
         const resp = {
             message: "success"
@@ -295,8 +295,8 @@ router.post("/presionarterial", async(req:Request, res:Response)=>{
         const dataPresion : IPresion ={
             id: id,
             dateOfCreated: new Date(new Date().toISOString()),
-            registroPresionAlta : presionAlta,
-            registroPresionBaja:presionBaja,
+            registroPresionAlta : Number(presionAlta),
+            registroPresionBaja: Number(presionBaja),
             userID: dataToken.userId
         }
         
