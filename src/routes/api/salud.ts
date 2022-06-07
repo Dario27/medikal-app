@@ -92,8 +92,8 @@ router.post("/glucemia", async(req:Request, res:Response)=>{
 
         const dataToken = await verifyToken(token)
         //console.log("1.0 dataToken => ", dataToken)
-        //const { isPacient, data} = await existsPacient(dataToken)
-        const id = await findNewIdImc(dataToken.userId, TypeIndicators.glucemia)
+        const { isPacient, data} = await existsPacient(dataToken.email)
+        const id = await findNewIdImc(data._id, TypeIndicators.glucemia)
         
         const dataGlucemia : IGlucemia ={
             id: id,
@@ -190,8 +190,8 @@ router.post("/imc", async(req:Request, res:Response)=>{
         }
 
         const dataToken = await verifyToken(token)
-        //const { isPacient, data} = await existsPacient(dataToken)
-        const id = await findNewIdImc(dataToken.userId, TypeIndicators.sobrepeso)
+        const { isPacient, data} = await existsPacient(dataToken)
+        const id = await findNewIdImc(data._id, TypeIndicators.sobrepeso)
         
         const dataIMC : IMasa ={
             id:id,
@@ -288,8 +288,8 @@ router.post("/presionarterial", async(req:Request, res:Response)=>{
         }
 
         const dataToken = await verifyToken(token)
-        //const { isPacient, data} = await existsPacient(dataToken)
-        const id = await findNewIdImc(dataToken.userId, TypeIndicators.presionArterial)
+        const { isPacient, data} = await existsPacient(dataToken)
+        const id = await findNewIdImc(data._id, TypeIndicators.presionArterial)
 
         const dataPresion : IPresion ={
             id: id,
