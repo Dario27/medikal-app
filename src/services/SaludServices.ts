@@ -184,6 +184,8 @@ export const findNewIdImc = async (ObjectId:any, typeIndicators:any)=>{
                 break;
         }
 
+        console.log("data new id =>", data)
+        
         if (data.length > 0) {
             idNew = (data[0].id)+1
         }else{
