@@ -19,14 +19,16 @@ import { verifyToken } from "../../Utils/VerifyToken";
 const router: Router = Router();
 
 router.get("/all", async(req:Request, res:Response)=>{
-    const email = req.headers["email"]
+    const token: String = req.headers.authorization   
+    //const email = req.headers["email"]
     const params = {
          typeIndicators : req.query.type,
          offset:req.query.offset || 1,
          page: req.query.page || 1
     }
     console.log("typeIndicators => ", params.typeIndicators)
-    const dataAll  = await findAllByIndicators(await findUserById(email), params)
+    const dataToken = await verifyToken(token)
+    const dataAll  = await findAllByIndicators(dataToken.userId, params)
     res.status(200).json(dataAll)
 })
 
