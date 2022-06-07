@@ -80,6 +80,8 @@ export const findAllByIndicators = async (ObjectId:any, params:any)=>{
         var res = null
         var aggregate = null
 
+        console.log("opcion pagination => ", options)
+
         switch (params.typeIndicators) {
             case "imc":
                 aggregate = Imc.aggregate([
