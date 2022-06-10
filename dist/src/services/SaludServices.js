@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.findNewIdImc = exports.findUserById = exports.findAllByIndicators = exports.saveRecordsPresion = exports.saveRecordsIMC = exports.createRecords = exports.existsPacient = exports.saveRecordsGlucemia = void 0;
+exports.findLastRecordIMC = exports.findNewIdImc = exports.findUserById = exports.findAllByIndicators = exports.saveRecordsPresion = exports.saveRecordsIMC = exports.createRecords = exports.existsPacient = exports.saveRecordsGlucemia = void 0;
 const Records_1 = require("../model/Records");
 const IGlucemia_1 = require("../model/IGlucemia");
 const IMasa_1 = require("../model/IMasa");
@@ -228,4 +228,23 @@ const findNewIdImc = (ObjectId, typeIndicators) => __awaiter(void 0, void 0, voi
     }
 });
 exports.findNewIdImc = findNewIdImc;
+const findLastRecordIMC = (objectId) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const lastRecord = yield IMasa_1.Imc.aggregate([
+            {
+                $match: { "userID": objectId }
+            },
+            {
+                $sort: {
+                    id: -1
+                }
+            }
+        ]);
+        return lastRecord;
+    }
+    catch (error) {
+        return error.message;
+    }
+});
+exports.findLastRecordIMC = findLastRecordIMC;
 //# sourceMappingURL=SaludServices.js.map
