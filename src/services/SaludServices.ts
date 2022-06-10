@@ -221,3 +221,23 @@ export const findNewIdImc = async (ObjectId:any, typeIndicators:any)=>{
         return error.message
     }
 }
+
+export const findLastRecordIMC = async (objectId:any) => {
+
+    try {
+        const lastRecord = await Imc.aggregate([
+            { 
+                $match:{ "userID": objectId}
+            },
+            { 
+                $sort:{
+                    id:-1
+                }
+            }
+        ])
+        return lastRecord
+
+    } catch (error) {
+        return error.message
+    }
+}

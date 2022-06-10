@@ -175,7 +175,7 @@ router.post("/imc", (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             alturaReg: Number(estatura),
             userID: dataToken.userId
         };
-        yield (0, SaludServices_1.saveRecordsIMC)(dataIMC);
+        yield (0, SaludServices_1.saveRecordsIMC)(dataIMC); //graba la tabla en imcrecords
         const resp = {
             message: "success"
         };
@@ -273,6 +273,27 @@ router.post("/presionarterial", (req, res) => __awaiter(void 0, void 0, void 0, 
             status: "fail"
         };
         res.status(400).json(respErr);
+    }
+}));
+router.get('/lastImc', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const token = req.headers.authorization;
+        const dataToken = yield (0, VerifyToken_1.verifyToken)(token);
+        const resp = yield (0, SaludServices_1.findLastRecordIMC)(yield (0, SaludServices_1.findUserById)(dataToken.email));
+        var response = null;
+        response = {
+            id: resp[0].id,
+            dateOfCreated: resp[0].dateOfCreated,
+            cantImc: resp[0].cantImc,
+            pesoReg: resp[0].pesoReg,
+            alturaReg: resp[0].alturaReg,
+            userID: dataToken.userId
+        };
+        console.log("response => ", response);
+        return res.status(200).json(response);
+    }
+    catch (error) {
+        return res.status(400).json(error.message);
     }
 }));
 exports.default = router;

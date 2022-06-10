@@ -1,6 +1,7 @@
 
 import { Router, Response, Request } from "express";
 import { existsPacient, findAllByIndicators, 
+    findLastRecordIMC, 
     findNewIdImc, 
     findUserById, 
     saveRecordsGlucemia,
@@ -314,6 +315,32 @@ router.post("/presionarterial", async(req:Request, res:Response)=>{
             status: "fail"
         }
         res.status(400).json(respErr)
+    }
+})
+
+router.get('/lastImc', async (req:Request, res:Response) => {
+    try {
+        const token: String = req.headers.authorization
+        const dataToken = await verifyToken(token)
+        const resp = await findLastRecordIMC(await findUserById(dataToken.email))
+        var response = null
+
+        response = {
+
+            id:resp[0].id,
+            dateOfCreated: resp[0].dateOfCreated,
+            cantImc : resp[0].cantImc,
+            pesoReg : resp[0].pesoReg,
+            alturaReg: resp[0].alturaReg,
+            userID: dataToken.userId
+        }
+
+        console.log("response => ", response)
+
+        return res.status(200).json(response)
+
+    } catch (error) {
+        return res.status(400).json(error.message)
     }
 })
 
