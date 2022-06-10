@@ -325,19 +325,22 @@ router.get('/lastImc', async (req:Request, res:Response) => {
         const resp = await findLastRecordIMC(await findUserById(dataToken.email))
         var response = null
 
-        response = {
+        if(resp !== null) {
+            response = {
+                id:resp[0].id,
+                dateOfCreated: resp[0].dateOfCreated,
+                cantImc : resp[0].cantImc,
+                pesoReg : resp[0].pesoReg,
+                alturaReg: resp[0].alturaReg,
+                userID: dataToken.userId
+            }
 
-            id:resp[0].id,
-            dateOfCreated: resp[0].dateOfCreated,
-            cantImc : resp[0].cantImc,
-            pesoReg : resp[0].pesoReg,
-            alturaReg: resp[0].alturaReg,
-            userID: dataToken.userId
-        }
+            console.log("response => ", response)
 
-        console.log("response => ", response)
-
-        return res.status(200).json(response)
+            return res.status(200).json(response)
+        }else{
+            return res.status(200).json({"message":"no hay registros"})
+        }     
 
     } catch (error) {
         return res.status(400).json(error.message)
