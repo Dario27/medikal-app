@@ -235,7 +235,13 @@ export const findLastRecordIMC = async (objectId:any) => {
                 }
             }
         ])
-        return lastRecord
+        var result = null
+        if (lastRecord.length >0){
+            result = lastRecord
+            return result
+        }else{
+            return result
+        }
 
     } catch (error) {
         return error.message

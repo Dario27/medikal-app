@@ -325,7 +325,7 @@ router.get('/lastImc', async (req:Request, res:Response) => {
         const resp = await findLastRecordIMC(await findUserById(dataToken.email))
         var response = null
 
-        if( resp !== null ){
+        if(resp !== null) {
             response = {
                 id:resp[0].id,
                 dateOfCreated: resp[0].dateOfCreated,
@@ -338,9 +338,9 @@ router.get('/lastImc', async (req:Request, res:Response) => {
 
             return res.status(200).json(response)
         }else{
-            return res.status(400).json({"message":"no hay registros"})
-        }
-    
+            return res.status(200).json({"message":"no hay registros"})
+        }     
+
     } catch (error) {
         return res.status(400).json(error.message)
     }
