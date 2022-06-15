@@ -245,6 +245,7 @@ export const findLastRecordIMC = async (objectId:any) => {
         }
 
     } catch (error) {
+        console.log("error response last=> ",error)
         return error.message
     }
 }
