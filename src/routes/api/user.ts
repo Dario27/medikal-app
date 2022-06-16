@@ -19,11 +19,12 @@ router.post("/create", async(req:Request, res:Response)=>{
     const nombres :String      = body.fName
     const apellidos: String    = body.lName
     const birthDate:Date       = body.birthDate    
-    const password: String     = body.password
-    const email: String        = body.email
-    const bloodType            = body.bloodType
-    const phone: String        = body.phone
-    const genre                = body.gender
+    const password: String   = body.password
+    const email: String             = body.email
+    const bloodType                   = body.bloodType
+    const phone: String            = body.phone
+    const genre                              = body.gender
+    const cedula : String          =  body.cedula
 
     console.log(" entrando al api de usuarios")
     const encryptSecretKey:any = config.get("key")
@@ -46,39 +47,26 @@ router.post("/create", async(req:Request, res:Response)=>{
             age        : currentEdad.toString(),
             email      : email,
             bloodType  : bloodType, 
-            gender     : genre
+            gender     : genre,
+            cedula : cedula
         }
-
-        /* const certificates:ICertificate = {
-            glucemia:[],
-            imc:[],
-            presion:[]
-        } */
-
-        /* const records:IRecords = {
-            userID : email,
-            certificates : certificates
-        } */
-
-        //await Records.create(records)
         
         const foundUsers = await findOneAndVerify(_email)
         if (foundUsers === null) {
             //console.log("data users: ", userData)
             const result = await createUser(userData) 
-            const _token = jsonwebtoken.sign({userId: result._id, email: result.email}, config.get("jwtSecret"))
+            const _token = jsonwebtoken.sign({userId: result._id, email: result.email, cedula:result.cedula}, config.get("jwtSecret"))
             const tokenLogin = "Bearer "+_token
             const response = await firstLogin(userData.email, password, tokenLogin)
         
-            res.json(response);
+            return res.status(200).json(response);
 
         }else{
             const dataUserResponse = {
                 message : "Usuario ya se encuentra registrado",
                 status: false
             }
-            res.status(400).json(dataUserResponse) //mensaje de error 
-
+            return res.status(400).json(dataUserResponse) //mensaje de error 
         }
   
     } catch (error) {
@@ -86,7 +74,7 @@ router.post("/create", async(req:Request, res:Response)=>{
             message : "Error: "+error.message,
             status: false
         }
-        res.status(404).json(errorResponse);
+        return res.status(404).json(errorResponse);
     }  
 
 })
@@ -171,18 +159,18 @@ router.post("/forgotPassw", async(req:Request, res:Response) => {
             if(insert){
                 await sendMail(userData.email, codeValidator)
 
-                res.status(200).json({                    
+                return res.status(200).json({                    
                     message: "Correo enviado con exito",
                     status:  "success"
                 })
             }else{
-                res.status(400).json({
+                return res.status(400).json({
                     message: "Error, no se ha podido generar el codigo temporal",
                     status:  "Fail"
                 }) 
             }
         }else{
-            res.status(400).json({
+            return res.status(400).json({
                 message: "Error, el usuario ingresado, no existe",
                 status:  "Fail"
             }) 
