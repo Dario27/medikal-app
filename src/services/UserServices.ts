@@ -83,3 +83,30 @@ export const verifyCode = async (code:number, email:string) => {
         return error.message;
     } 
 }
+
+/**
+ * @param  {} dataUser:IUser
+ * @return return Model user created
+ */
+export const userUpdate = async (dataUser:any) => {
+    try {
+        const userUpdate = await User.findOneAndUpdate(
+        { "email": dataUser.email},
+        { $set: {                
+            "fName" : dataUser.fName, 
+            "lName":dataUser.lName,
+            "birthDate":dataUser.birthDate,
+            "phone":dataUser.phone,
+            "cedula":dataUser.cedula,
+            "bloodType":dataUser.bloodType,
+            "gender":dataUser.gender
+        }},
+        { new: true })
+
+        return userUpdate
+    
+    } catch (error) {
+    console.error(error.message);
+    return error.message;
+    } 
+    }

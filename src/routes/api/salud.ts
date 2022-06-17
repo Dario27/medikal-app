@@ -335,9 +335,10 @@ router.get('/lastImc', async (req:Request, res:Response) => {
                 userID: dataToken.userId
             }
             console.log("response => ", response)
-
             return res.status(200).json(response)
+
         }else{
+            console.log("else - response => ", response)
             return res.status(200).json({"message":"no hay registros"})
         }     
 

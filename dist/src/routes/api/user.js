@@ -53,6 +53,7 @@ router.post("/create", (req, res) => __awaiter(void 0, void 0, void 0, function*
     const bloodType = body.bloodType;
     const phone = body.phone;
     const genre = body.gender;
+    const cedula = body.cedula;
     console.log(" entrando al api de usuarios");
     const encryptSecretKey = config_1.default.get("key");
     //console.log("encryptSecretKey =>", encryptSecretKey)
@@ -72,33 +73,24 @@ router.post("/create", (req, res) => __awaiter(void 0, void 0, void 0, function*
             age: currentEdad.toString(),
             email: email,
             bloodType: bloodType,
-            gender: genre
+            gender: genre,
+            cedula: cedula
         };
-        /* const certificates:ICertificate = {
-            glucemia:[],
-            imc:[],
-            presion:[]
-        } */
-        /* const records:IRecords = {
-            userID : email,
-            certificates : certificates
-        } */
-        //await Records.create(records)
         const foundUsers = yield (0, UserServices_1.findOneAndVerify)(_email);
         if (foundUsers === null) {
             //console.log("data users: ", userData)
             const result = yield (0, UserServices_1.createUser)(userData);
-            const _token = jsonwebtoken.sign({ userId: result._id, email: result.email }, config_1.default.get("jwtSecret"));
+            const _token = jsonwebtoken.sign({ userId: result._id, email: result.email, cedula: result.cedula }, config_1.default.get("jwtSecret"));
             const tokenLogin = "Bearer " + _token;
             const response = yield (0, Utils_1.firstLogin)(userData.email, password, tokenLogin);
-            res.json(response);
+            return res.status(200).json(response);
         }
         else {
             const dataUserResponse = {
                 message: "Usuario ya se encuentra registrado",
                 status: false
             };
-            res.status(400).json(dataUserResponse); //mensaje de error 
+            return res.status(400).json(dataUserResponse); //mensaje de error 
         }
     }
     catch (error) {
@@ -106,7 +98,7 @@ router.post("/create", (req, res) => __awaiter(void 0, void 0, void 0, function*
             message: "Error: " + error.message,
             status: false
         };
-        res.status(404).json(errorResponse);
+        return res.status(404).json(errorResponse);
     }
 }));
 router.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -135,7 +127,7 @@ router.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* 
             }
             else {
                 if (password === passwText) {
-                    const _token = jsonwebtoken.sign({ userId: foundUser._id, email: foundUser.email }, config_1.default.get("jwtSecret"));
+                    const _token = jsonwebtoken.sign({ userId: foundUser._id, email: foundUser.email, cedula: foundUser.cedula }, config_1.default.get("jwtSecret"));
                     data = {
                         message: "Usuario encontrado",
                         status: true,
@@ -182,20 +174,20 @@ router.post("/forgotPassw", (req, res) => __awaiter(void 0, void 0, void 0, func
             const { insert } = yield (0, UserServices_1.insCodeValidator)(codeValidator, email);
             if (insert) {
                 yield (0, Utils_1.sendMail)(userData.email, codeValidator);
-                res.status(200).json({
+                return res.status(200).json({
                     message: "Correo enviado con exito",
                     status: "success"
                 });
             }
             else {
-                res.status(400).json({
+                return res.status(400).json({
                     message: "Error, no se ha podido generar el codigo temporal",
                     status: "Fail"
                 });
             }
         }
         else {
-            res.status(400).json({
+            return res.status(400).json({
                 message: "Error, el usuario ingresado, no existe",
                 status: "Fail"
             });
@@ -231,7 +223,7 @@ router.post('/verifyCode', (req, res) => __awaiter(void 0, void 0, void 0, funct
             message: "Error: " + error.message,
             status: false
         };
-        res.status(404).json(errorResponse);
+        return res.status(404).json(errorResponse);
     }
 }));
 router.post('/newPassword', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -269,7 +261,7 @@ router.post('/newPassword', (req, res) => __awaiter(void 0, void 0, void 0, func
             message: "Error: " + error.message,
             status: false
         };
-        res.status(404).json(errorResponse);
+        return res.status(404).json(errorResponse);
     }
 }));
 router.get('/profile', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -302,6 +294,57 @@ router.get('/profile', (req, res) => __awaiter(void 0, void 0, void 0, function*
     }
     else {
         return res.status(200).json(data);
+    }
+}));
+router.post("/edit", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const body = req.body;
+    console.log("body-update-user => ", body);
+    const nombres = body.fName;
+    const apellidos = body.lName;
+    const birthDate = body.birthDate;
+    const bloodType = body.bloodType;
+    const phone = body.phone;
+    const genre = body.gender;
+    const cedula = body.cedula;
+    const token1 = req.headers.authorization;
+    const tokenArray = token1.split(' ');
+    const token = tokenArray[1];
+    console.log("token =>", token);
+    try {
+        var err = null;
+        var emailUser = null;
+        jsonwebtoken.verify(token, config_1.default.get("jwtSecret"), (errorToken, data) => {
+            console.log("errorToken", errorToken);
+            if (errorToken) {
+                err = errorToken;
+                return res.status(400).json({ status: "forbidden", message: err.message });
+            }
+            else {
+                console.log("data =>", JSON.stringify(data));
+                console.log("email => ", data.email);
+                emailUser = data.email;
+            }
+        });
+        const user = {
+            email: emailUser,
+            fName: nombres,
+            lName: apellidos,
+            bloodType: bloodType,
+            birthDate: birthDate,
+            phone: phone,
+            gender: genre,
+            cedula: cedula
+        };
+        const result = yield (0, UserServices_1.userUpdate)(user);
+        if (result !== null || result !== undefined) {
+            return res.status(200).json({ "message": "Datos actualizados con exito" });
+        }
+        else {
+            return res.status(404).json({ "message": "Error al actualizar los datos" });
+        }
+    }
+    catch (error) {
+        return res.status(400).json(error.message);
     }
 }));
 exports.default = router;

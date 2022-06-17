@@ -1,11 +1,9 @@
 import config from "config";
 import { Router, Response, Request } from "express";
 import { IUser, User } from "../../model/User";
-import { findOneAndVerify, createUser, updatePassword, insCodeValidator, verifyCode } from "../../services/UserServices";
+import { findOneAndVerify, createUser, updatePassword, insCodeValidator, verifyCode, userUpdate } from "../../services/UserServices";
 import { convertDateWithMoment, decryptPassw, encrypt, firstLogin, sendMail, dataProfile } from "../../Utils/Utils"
 import * as jsonwebtoken from "jsonwebtoken";
-import { IRecords, Records } from "../../model/Records";
-import { ICertificate } from "../../model/Certificates";
 //import Mail from "nodemailer/lib/mailer";
 
 const router: Router = Router();
@@ -19,12 +17,12 @@ router.post("/create", async(req:Request, res:Response)=>{
     const nombres :String      = body.fName
     const apellidos: String    = body.lName
     const birthDate:Date       = body.birthDate    
-    const password: String   = body.password
-    const email: String             = body.email
-    const bloodType                   = body.bloodType
-    const phone: String            = body.phone
-    const genre                              = body.gender
-    const cedula : String          =  body.cedula
+    const password: String     = body.password
+    const email: String        = body.email
+    const bloodType            = body.bloodType
+    const phone: String        = body.phone
+    const genre                          = body.gender
+    const cedula: String       = body.cedula
 
     console.log(" entrando al api de usuarios")
     const encryptSecretKey:any = config.get("key")
@@ -48,8 +46,8 @@ router.post("/create", async(req:Request, res:Response)=>{
             email      : email,
             bloodType  : bloodType, 
             gender     : genre,
-            cedula : cedula
-        }
+            cedula      : cedula
+        }       
         
         const foundUsers = await findOneAndVerify(_email)
         if (foundUsers === null) {
@@ -59,14 +57,15 @@ router.post("/create", async(req:Request, res:Response)=>{
             const tokenLogin = "Bearer "+_token
             const response = await firstLogin(userData.email, password, tokenLogin)
         
-            return res.status(200).json(response);
+           return res.status(200).json(response);
 
         }else{
             const dataUserResponse = {
                 message : "Usuario ya se encuentra registrado",
                 status: false
             }
-            return res.status(400).json(dataUserResponse) //mensaje de error 
+           return res.status(400).json(dataUserResponse) //mensaje de error 
+
         }
   
     } catch (error) {
@@ -108,7 +107,7 @@ router.post('/login', async(req:Request, res:Response)=>{
                 return res.status(404).json(data);
             }else{
                 if(password === passwText){
-                    const _token = jsonwebtoken.sign({userId: foundUser._id, email: foundUser.email}, config.get("jwtSecret"))
+                    const _token = jsonwebtoken.sign({userId: foundUser._id, email: foundUser.email, cedula:foundUser.cedula}, config.get("jwtSecret"))
                     data = {
                         message: "Usuario encontrado",
                         status:  true,
@@ -170,7 +169,7 @@ router.post("/forgotPassw", async(req:Request, res:Response) => {
                 }) 
             }
         }else{
-            return res.status(400).json({
+           return res.status(400).json({
                 message: "Error, el usuario ingresado, no existe",
                 status:  "Fail"
             }) 
@@ -207,7 +206,7 @@ router.post('/verifyCode', async (req:Request, res:Response) => {
             message : "Error: "+error.message,
             status: false
         }
-        res.status(404).json(errorResponse);
+        return res.status(404).json(errorResponse);
     }
 
 })
@@ -253,7 +252,7 @@ router.post('/newPassword', async (req:Request, res:Response) => {
             message : "Error: "+error.message,
             status: false
         }
-        res.status(404).json(errorResponse);
+        return res.status(404).json(errorResponse);
     }
     
     
@@ -293,6 +292,60 @@ router.get('/profile', async (req:Request, res:Response) => {
         data
     )
    }    
+})
+
+router.post("/edit", async(req:Request, res:Response)=>{
+    const body = req.body
+
+    console.log("body-update-user => ", body)
+    
+    const nombres :String     = body.fName
+    const apellidos: String    = body.lName
+    const birthDate:Date       = body.birthDate
+    const bloodType                = body.bloodType
+    const phone: String        = body.phone
+    const genre                          = body.gender
+    const cedula: String       = body.cedula
+
+    const token1: String = req.headers.authorization
+    const tokenArray = token1.split(' ')
+    const token:any = tokenArray[1]
+    console.log("token =>", token)
+    try {
+
+        var err = null
+        var emailUser = null
+        jsonwebtoken.verify(token, config.get("jwtSecret"), (errorToken:any, data:any) =>{
+            console.log("errorToken", errorToken)
+            if(errorToken) {
+                err = errorToken
+                return res.status(400).json({ status:"forbidden", message:err.message})
+            }else{
+                console.log("data =>", JSON.stringify(data))
+                console.log("email => ", data.email)
+                emailUser = data.email
+            }
+        })
+
+        const user:IUser = {
+            email: emailUser,
+            fName : nombres,
+            lName : apellidos,
+            bloodType : bloodType,
+            birthDate : birthDate,
+            phone: phone,
+            gender : genre,
+            cedula : cedula
+        }
+        const result = await userUpdate(user)
+        if (result !== null || result !== undefined) {
+            return res.status(200).json({"message":"Datos actualizados con exito"})
+        }else{
+            return res.status(404).json({"message":"Error al actualizar los datos"})
+        }
+    } catch (error) {
+        return res.status(400).json(error.message)
+    }
 })
 
 export default router;
