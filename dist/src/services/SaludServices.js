@@ -240,7 +240,14 @@ const findLastRecordIMC = (objectId) => __awaiter(void 0, void 0, void 0, functi
                 }
             }
         ]);
-        return lastRecord;
+        var result = null;
+        if (lastRecord.length > 0) {
+            result = lastRecord;
+            return result;
+        }
+        else {
+            return result;
+        }
     }
     catch (error) {
         return error.message;

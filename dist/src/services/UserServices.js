@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.verifyCode = exports.insCodeValidator = exports.updatePassword = exports.createUser = exports.findOneAndVerify = void 0;
+exports.userUpdate = exports.verifyCode = exports.insCodeValidator = exports.updatePassword = exports.createUser = exports.findOneAndVerify = void 0;
 const User_1 = require("../model/User");
 const findOneAndVerify = (email) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -89,4 +89,27 @@ const verifyCode = (code, email) => __awaiter(void 0, void 0, void 0, function* 
     }
 });
 exports.verifyCode = verifyCode;
+/**
+ * @param  {} dataUser:IUser
+ * @return return Model user created
+ */
+const userUpdate = (dataUser) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const userUpdate = yield User_1.User.findOneAndUpdate({ "email": dataUser.email }, { $set: {
+                "fName": dataUser.fName,
+                "lName": dataUser.lName,
+                "birthDate": dataUser.birthDate,
+                "phone": dataUser.phone,
+                "cedula": dataUser.cedula,
+                "bloodType": dataUser.bloodType,
+                "gender": dataUser.gender
+            } }, { new: true });
+        return userUpdate;
+    }
+    catch (error) {
+        console.error(error.message);
+        return error.message;
+    }
+});
+exports.userUpdate = userUpdate;
 //# sourceMappingURL=UserServices.js.map
