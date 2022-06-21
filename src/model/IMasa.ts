@@ -7,6 +7,7 @@ export interface IMasa extends Document {
     cantImc                : Number;
     pesoReg                : Number;
     alturaReg             : Number;
+    cintura                   : Number;
     userID                    : Object;
 }
 
@@ -19,6 +20,7 @@ const imcSchema: Schema = new Schema({
     cantImc  : Number, 
     pesoReg: Number,
     alturaReg : Number,
+    cintura       : Number,
     userID :{
         type: mongoose.Schema.Types.ObjectId,
         required : true,
