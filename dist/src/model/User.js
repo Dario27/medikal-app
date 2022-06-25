@@ -43,7 +43,7 @@ const userSchema = new mongoose_1.Schema({
         type: Number,
         default: '0o0'
     },
-    cedula: String
+    identification: String
 });
 // Note: OverwriteModelError: Cannot overwrite `User` model once compiled. error
 exports.User = (mongoose_1.default.models.users || mongoose_1.default.model('users', userSchema, "users"));
