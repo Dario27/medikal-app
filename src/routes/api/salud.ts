@@ -126,7 +126,7 @@ router.post("/imc", async(req:Request, res:Response)=>{
     const body = req.body;
     const estatura = body.height
     const peso = body.weight
-    const cintura = body.cintura
+    const cintura = body.waist
     const token: String = req.headers.authorization    
     var response = null
     try {
@@ -202,7 +202,7 @@ router.post("/imc", async(req:Request, res:Response)=>{
             cantImc : IMC,
             pesoReg : Number(peso),
             alturaReg: Number(estatura),
-            cintura: cintura,
+            waist: cintura,
             userID: dataToken.userId
         }
 

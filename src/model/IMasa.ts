@@ -7,7 +7,7 @@ export interface IMasa extends Document {
     cantImc                : Number;
     pesoReg                : Number;
     alturaReg             : Number;
-    cintura                   : Number;
+    waist                 : Number;
     userID                    : Object;
 }
 
