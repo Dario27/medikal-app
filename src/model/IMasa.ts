@@ -4,11 +4,11 @@ import mongooseAggregatePaginate from 'mongoose-aggregate-paginate-v2';
 export interface IMasa extends Document {
     id            : Number;
     dateOfCreated : Date;
-    cantImc       : Number;
-    pesoReg       : Number;
-    alturaReg     : Number;
-    cintura       : Number;
-    userID        : Object;
+    cantImc                : Number;
+    pesoReg                : Number;
+    alturaReg             : Number;
+    waist                 : Number;
+    userID                    : Object;
 }
 
 const imcSchema: Schema = new Schema({
