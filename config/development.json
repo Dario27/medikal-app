@@ -7,6 +7,7 @@
     "key":"ABCDEF0123456789ABCDEF0123456789",
     "smtpMail":"smtp.gmail.com",
     "emailSend":"info.medikalapp@gmail.com",
-    "claveCorreo":"CuentaApp@22"
+    "claveCorreo":"CuentaApp@22",
+    "SENDGRID_API_KEY":"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"
 }
   

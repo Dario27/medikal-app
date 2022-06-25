@@ -4,6 +4,7 @@ import nodemailer from "nodemailer"
 import config from "config"
 import * as jsonwebtoken from "jsonwebtoken";
 import { findOneAndVerify } from "../services/UserServices";
+import sendgrid from "@sendgrid/mail";
 
 //const SecrectIv = (CryptoJS.lib.WordArray.random(128 / 8)).toString();
 const SecrectIv = 'ABCDEF0123456789ABCDEF0123456789';
@@ -43,6 +44,10 @@ export const decryptPassw = (ciphertextB64:any, encryptSecretKey:any) =>{
 }
 
 export const sendMail = async(email:any, codeValidator:any)=>{
+
+
+  sendgrid.setApiKey(config.get("smtpMail"))
+
   
   const host = config.get("smtpMail")// "smtp.gmail.com"
   const user = config.get("emailSend")//"chilansteven221@gmail.com"
