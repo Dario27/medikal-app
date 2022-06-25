@@ -2,17 +2,17 @@ import mongoose,{ Schema, AggregatePaginateModel } from 'mongoose';
 import mongooseAggregatePaginate from 'mongoose-aggregate-paginate-v2';
 
 export interface IMasa extends Document {
-    id                                : Number;
+    id            : Number;
     dateOfCreated : Date;
-    cantImc                : Number;
-    pesoReg                : Number;
-    alturaReg             : Number;
-    cintura                   : Number;
-    userID                    : Object;
+    cantImc       : Number;
+    pesoReg       : Number;
+    alturaReg     : Number;
+    cintura       : Number;
+    userID        : Object;
 }
 
 const imcSchema: Schema = new Schema({
-    id                                : Number,
+    id            : Number,
     dateOfCreated : { 
         type: Date,
         default: Date.now
@@ -20,7 +20,7 @@ const imcSchema: Schema = new Schema({
     cantImc  : Number, 
     pesoReg: Number,
     alturaReg : Number,
-    cintura       : Number,
+    cintura   : Number,
     userID :{
         type: mongoose.Schema.Types.ObjectId,
         required : true,
