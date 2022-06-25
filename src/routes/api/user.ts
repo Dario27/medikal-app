@@ -311,38 +311,47 @@ router.post("/edit", async(req:Request, res:Response)=>{
     const tokenArray = token1.split(' ')
     const token:any = tokenArray[1]
     console.log("token =>", token)
+
     try {
 
         var err = null
         var emailUser = null
-        jsonwebtoken.verify(token, config.get("jwtSecret"), (errorToken:any, data:any) =>{
-            console.log("errorToken", errorToken)
-            if(errorToken) {
-                err = errorToken
-                return res.status(400).json({ status:"forbidden", message:err.message})
-            }else{
-                console.log("data =>", JSON.stringify(data))
-                console.log("email => ", data.email)
-                emailUser = data.email
-            }
-        })
 
-        const user:IUser = {
-            email: emailUser,
-            fName : nombres,
-            lName : apellidos,
-            bloodType : bloodType,
-            birthDate : birthDate,
-            phone: phone,
-            gender : genre,
-            cedula : cedula
+        if (cedula.length === 0 || cedula === undefined) {
+            return res.status(400).json({
+                "message":"Error en el campo cedula, esta vacio o indefinido"
+            })
+        } else {
+            jsonwebtoken.verify(token, config.get("jwtSecret"), (errorToken:any, data:any) =>{
+                console.log("errorToken", errorToken)
+                if(errorToken) {
+                    err = errorToken
+                    return res.status(400).json({ status:"forbidden", message:err.message})
+                }else{
+                    console.log("data =>", JSON.stringify(data))
+                    console.log("email => ", data.email)
+                    emailUser = data.email
+                }
+            })
+    
+            const user:IUser = {
+                email: emailUser,
+                fName : nombres,
+                lName : apellidos,
+                bloodType : bloodType,
+                birthDate : birthDate,
+                phone: phone,
+                gender : genre,
+                cedula : cedula
+            }
+            const result = await userUpdate(user)
+            if (result !== null || result !== undefined) {
+                return res.status(200).json({"message":"Datos actualizados con exito"})
+            }else{
+                return res.status(404).json({"message":"Error al actualizar los datos"})
+            }
         }
-        const result = await userUpdate(user)
-        if (result !== null || result !== undefined) {
-            return res.status(200).json({"message":"Datos actualizados con exito"})
-        }else{
-            return res.status(404).json({"message":"Error al actualizar los datos"})
-        }
+        
     } catch (error) {
         return res.status(400).json(error.message)
     }
