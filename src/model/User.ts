@@ -12,7 +12,7 @@ export interface IUser extends Document {
     age             : String;
     gender          : String;
     codeValidador   : Number;
-    cedula                     : String;
+    identification  : String;
   }
 
   const userSchema: Schema = new Schema({
@@ -33,7 +33,7 @@ export interface IUser extends Document {
       type: Number,
       default: '0o0'
     },
-    cedula            : String
+    identification   : String
   });
   
   // Note: OverwriteModelError: Cannot overwrite `User` model once compiled. error

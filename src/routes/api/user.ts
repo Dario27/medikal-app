@@ -22,50 +22,55 @@ router.post("/create", async(req:Request, res:Response)=>{
     const bloodType            = body.bloodType
     const phone: String        = body.phone
     const genre                          = body.gender
-    const cedula: String       = body.cedula
+    const cedula: String       = body.identification
 
     console.log(" entrando al api de usuarios")
     const encryptSecretKey:any = config.get("key")
     //console.log("encryptSecretKey =>", encryptSecretKey)
     try {
         const _email:String  = email
-
         const anioNac = new Date(birthDate).getFullYear()
         console.log("anio Nac ", anioNac)
         const passwordEncrypt = encrypt(password, encryptSecretKey)
         const anioCurrent = new Date().getFullYear()
         const currentEdad = (anioCurrent-anioNac)
 
-        const userData:IUser = {            
-            fName      : nombres,
-            lName      : apellidos,
-            birthDate  : birthDate,
-            phone      : phone,
-            password   : passwordEncrypt,
-            age        : currentEdad.toString(),
-            email      : email,
-            bloodType  : bloodType, 
-            gender     : genre,
-            cedula      : cedula
-        }       
-        
-        const foundUsers = await findOneAndVerify(_email)
-        if (foundUsers === null) {
-            //console.log("data users: ", userData)
-            const result = await createUser(userData) 
-            const _token = jsonwebtoken.sign({userId: result._id, email: result.email, cedula:result.cedula}, config.get("jwtSecret"))
-            const tokenLogin = "Bearer "+_token
-            const response = await firstLogin(userData.email, password, tokenLogin)
-        
-           return res.status(200).json(response);
-
+        if (cedula.length === 0 || cedula === undefined) {
+            return res.status(400).json({
+                "message":"Error en el campo cedula, esta vacio o indefinido"
+            })
         }else{
-            const dataUserResponse = {
-                message : "Usuario ya se encuentra registrado",
-                status: false
-            }
-           return res.status(400).json(dataUserResponse) //mensaje de error 
-
+            const userData: IUser = {            
+                fName      : nombres,
+                lName      : apellidos,
+                birthDate  : birthDate,
+                phone      : phone,
+                password   : passwordEncrypt,
+                age        : currentEdad.toString(),
+                email      : email,
+                bloodType  : bloodType, 
+                gender     : genre,
+                identification : cedula
+            }       
+            
+            const foundUsers = await findOneAndVerify(_email)
+            if (foundUsers === null) {
+                //console.log("data users: ", userData)
+                const result = await createUser(userData) 
+                const _token = jsonwebtoken.sign({userId: result._id, email: result.email, cedula:result.cedula}, config.get("jwtSecret"))
+                const tokenLogin = "Bearer "+_token
+                const response = await firstLogin(userData.email, password, tokenLogin)
+            
+               return res.status(200).json(response);
+    
+            }else{
+                const dataUserResponse = {
+                    message : "Usuario ya se encuentra registrado",
+                    status: false
+                }
+               return res.status(400).json(dataUserResponse) //mensaje de error 
+    
+            }     
         }
   
     } catch (error) {
@@ -302,10 +307,10 @@ router.post("/edit", async(req:Request, res:Response)=>{
     const nombres :String     = body.fName
     const apellidos: String    = body.lName
     const birthDate:Date       = body.birthDate
-    const bloodType                = body.bloodType
+    const bloodType            = body.bloodType
     const phone: String        = body.phone
-    const genre                          = body.gender
-    const cedula: String       = body.cedula
+    const genre                = body.gender
+    const cedula: String       = body.identification
 
     const token1: String = req.headers.authorization
     const tokenArray = token1.split(' ')
@@ -342,7 +347,7 @@ router.post("/edit", async(req:Request, res:Response)=>{
                 birthDate : birthDate,
                 phone: phone,
                 gender : genre,
-                cedula : cedula
+                identification : cedula
             }
             const result = await userUpdate(user)
             if (result !== null || result !== undefined) {

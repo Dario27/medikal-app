@@ -53,7 +53,7 @@ router.post("/create", (req, res) => __awaiter(void 0, void 0, void 0, function*
     const bloodType = body.bloodType;
     const phone = body.phone;
     const genre = body.gender;
-    const cedula = body.cedula;
+    const cedula = body.identification;
     console.log(" entrando al api de usuarios");
     const encryptSecretKey = config_1.default.get("key");
     //console.log("encryptSecretKey =>", encryptSecretKey)
@@ -64,33 +64,40 @@ router.post("/create", (req, res) => __awaiter(void 0, void 0, void 0, function*
         const passwordEncrypt = (0, Utils_1.encrypt)(password, encryptSecretKey);
         const anioCurrent = new Date().getFullYear();
         const currentEdad = (anioCurrent - anioNac);
-        const userData = {
-            fName: nombres,
-            lName: apellidos,
-            birthDate: birthDate,
-            phone: phone,
-            password: passwordEncrypt,
-            age: currentEdad.toString(),
-            email: email,
-            bloodType: bloodType,
-            gender: genre,
-            cedula: cedula
-        };
-        const foundUsers = yield (0, UserServices_1.findOneAndVerify)(_email);
-        if (foundUsers === null) {
-            //console.log("data users: ", userData)
-            const result = yield (0, UserServices_1.createUser)(userData);
-            const _token = jsonwebtoken.sign({ userId: result._id, email: result.email, cedula: result.cedula }, config_1.default.get("jwtSecret"));
-            const tokenLogin = "Bearer " + _token;
-            const response = yield (0, Utils_1.firstLogin)(userData.email, password, tokenLogin);
-            return res.status(200).json(response);
+        if (cedula.length === 0 || cedula === undefined) {
+            return res.status(400).json({
+                "message": "Error en el campo cedula, esta vacio o indefinido"
+            });
         }
         else {
-            const dataUserResponse = {
-                message: "Usuario ya se encuentra registrado",
-                status: false
+            const userData = {
+                fName: nombres,
+                lName: apellidos,
+                birthDate: birthDate,
+                phone: phone,
+                password: passwordEncrypt,
+                age: currentEdad.toString(),
+                email: email,
+                bloodType: bloodType,
+                gender: genre,
+                identification: cedula
             };
-            return res.status(400).json(dataUserResponse); //mensaje de error 
+            const foundUsers = yield (0, UserServices_1.findOneAndVerify)(_email);
+            if (foundUsers === null) {
+                //console.log("data users: ", userData)
+                const result = yield (0, UserServices_1.createUser)(userData);
+                const _token = jsonwebtoken.sign({ userId: result._id, email: result.email, cedula: result.cedula }, config_1.default.get("jwtSecret"));
+                const tokenLogin = "Bearer " + _token;
+                const response = yield (0, Utils_1.firstLogin)(userData.email, password, tokenLogin);
+                return res.status(200).json(response);
+            }
+            else {
+                const dataUserResponse = {
+                    message: "Usuario ya se encuentra registrado",
+                    status: false
+                };
+                return res.status(400).json(dataUserResponse); //mensaje de error 
+            }
         }
     }
     catch (error) {
@@ -305,7 +312,7 @@ router.post("/edit", (req, res) => __awaiter(void 0, void 0, void 0, function* (
     const bloodType = body.bloodType;
     const phone = body.phone;
     const genre = body.gender;
-    const cedula = body.cedula;
+    const cedula = body.identification;
     const token1 = req.headers.authorization;
     const tokenArray = token1.split(' ');
     const token = tokenArray[1];
@@ -339,7 +346,7 @@ router.post("/edit", (req, res) => __awaiter(void 0, void 0, void 0, function* (
                 birthDate: birthDate,
                 phone: phone,
                 gender: genre,
-                cedula: cedula
+                identification: cedula
             };
             const result = yield (0, UserServices_1.userUpdate)(user);
             if (result !== null || result !== undefined) {
