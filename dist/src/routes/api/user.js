@@ -313,34 +313,41 @@ router.post("/edit", (req, res) => __awaiter(void 0, void 0, void 0, function* (
     try {
         var err = null;
         var emailUser = null;
-        jsonwebtoken.verify(token, config_1.default.get("jwtSecret"), (errorToken, data) => {
-            console.log("errorToken", errorToken);
-            if (errorToken) {
-                err = errorToken;
-                return res.status(400).json({ status: "forbidden", message: err.message });
-            }
-            else {
-                console.log("data =>", JSON.stringify(data));
-                console.log("email => ", data.email);
-                emailUser = data.email;
-            }
-        });
-        const user = {
-            email: emailUser,
-            fName: nombres,
-            lName: apellidos,
-            bloodType: bloodType,
-            birthDate: birthDate,
-            phone: phone,
-            gender: genre,
-            cedula: cedula
-        };
-        const result = yield (0, UserServices_1.userUpdate)(user);
-        if (result !== null || result !== undefined) {
-            return res.status(200).json({ "message": "Datos actualizados con exito" });
+        if (cedula.length === 0 || cedula === undefined) {
+            return res.status(400).json({
+                "message": "Error en el campo cedula, esta vacio o indefinido"
+            });
         }
         else {
-            return res.status(404).json({ "message": "Error al actualizar los datos" });
+            jsonwebtoken.verify(token, config_1.default.get("jwtSecret"), (errorToken, data) => {
+                console.log("errorToken", errorToken);
+                if (errorToken) {
+                    err = errorToken;
+                    return res.status(400).json({ status: "forbidden", message: err.message });
+                }
+                else {
+                    console.log("data =>", JSON.stringify(data));
+                    console.log("email => ", data.email);
+                    emailUser = data.email;
+                }
+            });
+            const user = {
+                email: emailUser,
+                fName: nombres,
+                lName: apellidos,
+                bloodType: bloodType,
+                birthDate: birthDate,
+                phone: phone,
+                gender: genre,
+                cedula: cedula
+            };
+            const result = yield (0, UserServices_1.userUpdate)(user);
+            if (result !== null || result !== undefined) {
+                return res.status(200).json({ "message": "Datos actualizados con exito" });
+            }
+            else {
+                return res.status(404).json({ "message": "Error al actualizar los datos" });
+            }
         }
     }
     catch (error) {
