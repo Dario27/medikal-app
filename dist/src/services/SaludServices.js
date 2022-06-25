@@ -240,6 +240,7 @@ const findLastRecordIMC = (objectId) => __awaiter(void 0, void 0, void 0, functi
                 }
             }
         ]);
+        console.log("response last=> ", lastRecord);
         var result = null;
         if (lastRecord.length > 0) {
             result = lastRecord;
@@ -250,6 +251,7 @@ const findLastRecordIMC = (objectId) => __awaiter(void 0, void 0, void 0, functi
         }
     }
     catch (error) {
+        console.log("error response last=> ", error);
         return error.message;
     }
 });
