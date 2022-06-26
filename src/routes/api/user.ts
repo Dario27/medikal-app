@@ -46,7 +46,7 @@ router.post("/create", async(req:Request, res:Response)=>{
                 birthDate  : birthDate,
                 phone      : phone,
                 password   : passwordEncrypt,
-                age        : currentEdad.toString(),
+                age        : currentEdad,
                 email      : email,
                 bloodType  : bloodType, 
                 gender     : genre,

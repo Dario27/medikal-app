@@ -105,7 +105,7 @@ router.post("/imc", (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     const body = req.body;
     const estatura = body.height;
     const peso = body.weight;
-    const cintura = body.cintura;
+    const cintura = body.waist;
     const token = req.headers.authorization;
     var response = null;
     try {
@@ -174,7 +174,7 @@ router.post("/imc", (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             cantImc: IMC,
             pesoReg: Number(peso),
             alturaReg: Number(estatura),
-            cintura: cintura,
+            waist: cintura,
             userID: dataToken.userId
         };
         yield (0, SaludServices_1.saveRecordsIMC)(dataIMC); //graba la tabla en imcrecords

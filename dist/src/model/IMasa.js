@@ -38,7 +38,7 @@ const imcSchema = new mongoose_1.Schema({
     cantImc: Number,
     pesoReg: Number,
     alturaReg: Number,
-    cintura: Number,
+    waist: Number,
     userID: {
         type: mongoose_1.default.Schema.Types.ObjectId,
         required: true,

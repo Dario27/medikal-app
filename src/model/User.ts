@@ -9,7 +9,7 @@ export interface IUser extends Document {
     password        : String;
     phone           : String;
     bloodType       : String;
-    age             : String;
+    age             : Number;
     gender          : String;
     codeValidador   : Number;
     identification  : String;
@@ -27,7 +27,7 @@ export interface IUser extends Document {
     },
     phone           : String,
     bloodType       : String,
-    age             : String,
+    age             : Number,
     gender          : String,
     codeValidador   : {
       type: Number,
