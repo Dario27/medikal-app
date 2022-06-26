@@ -8,6 +8,7 @@ export interface IUser extends Document {
     dateCreated     : Date;
     password        : String;
     phone           : String;
+    height          : Number;
     bloodType       : String;
     age             : Number;
     gender          : String;
@@ -26,6 +27,10 @@ export interface IUser extends Document {
       default: Date.now
     },
     phone           : String,
+    height          : {
+      type: Number,
+      default: '0o0'
+    },
     bloodType       : String,
     age             : Number,
     gender          : String,
