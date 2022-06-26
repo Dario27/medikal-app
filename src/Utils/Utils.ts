@@ -43,10 +43,6 @@ export const decryptPassw = (ciphertextB64:any, encryptSecretKey:any) =>{
 }
 
 export const sendMail = async(email:any, codeValidator:any)=>{
-
-
-  sendgrid.setApiKey(config.get("smtpMail"))
-
   
   console.log(config.get("nameDb"))
   //const host = config.get("smtpMail")// "smtp.gmail.com"
