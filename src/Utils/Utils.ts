@@ -27,7 +27,6 @@ export const encrypt = (textPalin:any, encryptSecretKey:any) => {
   return Buffer.from(aesEncrypter).toString('base64')
 }
 
-
 //Funcion para realizar la desencriptacion
 export const decryptPassw = (ciphertextB64:any, encryptSecretKey:any) =>{
   
