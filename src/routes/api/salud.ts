@@ -16,6 +16,7 @@ import { IPresion } from "../../model/Ipresion";
 import { IRecords } from "../../model/Records";
 import { TypeIndicators } from "../../model/Interfaces/TypeIndicators";
 import { verifyToken } from "../../Utils/VerifyToken";
+import { userUpdateHeight } from "../../services/UserServices";
 
 const router: Router = Router();
 
@@ -207,6 +208,9 @@ router.post("/imc", async(req:Request, res:Response)=>{
         }
 
         await saveRecordsIMC(dataIMC) //graba la tabla en imcrecords
+        if (data.height !== Number(estatura)) {
+            await userUpdateHeight(Number(estatura), dataToken.email)
+        }
 
         const resp = {
             message: "success"
