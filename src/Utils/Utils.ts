@@ -1,10 +1,10 @@
 import moment from "moment"
 import crypto from "crypto"
-import nodemailer from "nodemailer"
+//import nodemailer from "nodemailer"
 import config from "config"
 import * as jsonwebtoken from "jsonwebtoken";
 import { findOneAndVerify } from "../services/UserServices";
-import sendgrid from "@sendgrid/mail";
+import sendGrid from "@sendgrid/mail"
 
 //const SecrectIv = (CryptoJS.lib.WordArray.random(128 / 8)).toString();
 const SecrectIv = 'ABCDEF0123456789ABCDEF0123456789';
@@ -49,37 +49,32 @@ export const sendMail = async(email:any, codeValidator:any)=>{
   sendgrid.setApiKey(config.get("smtpMail"))
 
   
-  const host = config.get("smtpMail")// "smtp.gmail.com"
+  console.log(config.get("nameDb"))
+  //const host = config.get("smtpMail")// "smtp.gmail.com"
   const user = config.get("emailSend")//"chilansteven221@gmail.com"
-  const passw = config.get("claveCorreo")//"CuentaGmail2022"
-
-  const hostname = host.toString()
+  //const passw = config.get("claveCorreo")//"CuentaGmail2022"
+  const apiKey = config.get("apikey_mail").toString() // api akey sendGrid
   const username = user.toString()
-  const password = passw.toString()
+  sendGrid.setApiKey(apiKey)
+  console.log("apikey => ", apiKey)
 
-  // config transport mail 
-  const transporter = nodemailer.createTransport({
-      host: hostname,
-      port: 587,
-      secure: false,
-      requireTLS: true,
-      auth: {
-        user: username,
-        pass: password,
-      },
-      logger: true
-    });    
+  const infoMsg ={
+    to: email,
+    from: `Info medikal-app <${username}>`,
+    subject: "Recuperar contraseña",
+    text: "Para restablecer su contraseña ingresar el codigo de verificacion.",
+    html: `<p>Solicitud de recuperacion de contraseña, su codigo de verificacion es: <strong>${codeValidator}</strong> </p>`
+  }
 
-  // send mail with defined transport object //<a href="https://www.duplichecker.com/">Duplicate Checker</a>
-  const info = await transporter.sendMail({
-      from: `Info medikal-app <${username}>`,
-      to: email,
-      subject: "Recuperar contraseña",
-      text: "Para restablecer su contraseña ingresar el codigo de verificacion.",
-      html: `<p>Solicitud de recuperacion de contraseña, su codigo de verificacion es: <strong>${codeValidator}</strong> </p>`
-  });
+  console.log("Message sent: %s", infoMsg);
 
-  console.log("Message sent: %s", info.response);
+  try {
+   
+   const responsemail = await sendGrid.send(infoMsg)
+   console.log("responsemail => ", responsemail)
+  } catch (error) {
+    console.log(error.message)
+  }
 
   return "email send"
 }

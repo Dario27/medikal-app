@@ -1,16 +1,16 @@
 import mongoose,{ Schema } from 'mongoose';
 //console.log("schema user.....")
 export interface IUser extends Document {
-    fName                       : String;
-    lName                       : String;
-    email                         : String;
-    birthDate               : Date;
-    dateCreated        : Date;
-    password              : String;
-    phone                       : String;
-    bloodType             : String;
-    age                             : String;
-    gender                     : String;
+    fName           : String;
+    lName           : String;
+    email           : String;
+    birthDate       : Date;
+    dateCreated     : Date;
+    password        : String;
+    phone           : String;
+    bloodType       : String;
+    age             : Number;
+    gender          : String;
     codeValidador   : Number;
     identification  : String;
   }
@@ -27,7 +27,7 @@ export interface IUser extends Document {
     },
     phone           : String,
     bloodType       : String,
-    age             : String,
+    age             : Number,
     gender          : String,
     codeValidador   : {
       type: Number,

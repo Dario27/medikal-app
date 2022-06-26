@@ -37,7 +37,7 @@ const userSchema = new mongoose_1.Schema({
     },
     phone: String,
     bloodType: String,
-    age: String,
+    age: Number,
     gender: String,
     codeValidador: {
         type: Number,

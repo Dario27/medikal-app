@@ -76,7 +76,7 @@ router.post("/create", (req, res) => __awaiter(void 0, void 0, void 0, function*
                 birthDate: birthDate,
                 phone: phone,
                 password: passwordEncrypt,
-                age: currentEdad.toString(),
+                age: currentEdad,
                 email: email,
                 bloodType: bloodType,
                 gender: genre,

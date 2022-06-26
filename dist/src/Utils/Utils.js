@@ -38,10 +38,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.calcularIMCPaciente = exports.dataProfile = exports.firstLogin = exports.sendMail = exports.decryptPassw = exports.encrypt = exports.convertDateWithMoment = void 0;
 const moment_1 = __importDefault(require("moment"));
 const crypto_1 = __importDefault(require("crypto"));
-const nodemailer_1 = __importDefault(require("nodemailer"));
+//import nodemailer from "nodemailer"
 const config_1 = __importDefault(require("config"));
 const jsonwebtoken = __importStar(require("jsonwebtoken"));
 const UserServices_1 = require("../services/UserServices");
+const mail_1 = __importDefault(require("@sendgrid/mail"));
 //const SecrectIv = (CryptoJS.lib.WordArray.random(128 / 8)).toString();
 const SecrectIv = 'ABCDEF0123456789ABCDEF0123456789';
 const convertDateWithMoment = (stringDate) => {
@@ -72,33 +73,29 @@ const decryptPassw = (ciphertextB64, encryptSecretKey) => {
 };
 exports.decryptPassw = decryptPassw;
 const sendMail = (email, codeValidator) => __awaiter(void 0, void 0, void 0, function* () {
-    const host = config_1.default.get("smtpMail"); // "smtp.gmail.com"
+    console.log(config_1.default.get("nameDb"));
+    //const host = config.get("smtpMail")// "smtp.gmail.com"
     const user = config_1.default.get("emailSend"); //"chilansteven221@gmail.com"
-    const passw = config_1.default.get("claveCorreo"); //"CuentaGmail2022"
-    const hostname = host.toString();
+    //const passw = config.get("claveCorreo")//"CuentaGmail2022"
+    const apiKey = config_1.default.get("apikey_mail").toString(); // api akey sendGrid
     const username = user.toString();
-    const password = passw.toString();
-    // config transport mail 
-    const transporter = nodemailer_1.default.createTransport({
-        host: hostname,
-        port: 587,
-        secure: false,
-        requireTLS: true,
-        auth: {
-            user: username,
-            pass: password,
-        },
-        logger: true
-    });
-    // send mail with defined transport object //<a href="https://www.duplichecker.com/">Duplicate Checker</a>
-    const info = yield transporter.sendMail({
-        from: `Info medikal-app <${username}>`,
+    mail_1.default.setApiKey(apiKey);
+    console.log("apikey => ", apiKey);
+    const infoMsg = {
         to: email,
+        from: `Info medikal-app <${username}>`,
         subject: "Recuperar contraseña",
         text: "Para restablecer su contraseña ingresar el codigo de verificacion.",
         html: `<p>Solicitud de recuperacion de contraseña, su codigo de verificacion es: <strong>${codeValidator}</strong> </p>`
-    });
-    console.log("Message sent: %s", info.response);
+    };
+    console.log("Message sent: %s", infoMsg);
+    try {
+        const responsemail = yield mail_1.default.send(infoMsg);
+        console.log("responsemail => ", responsemail);
+    }
+    catch (error) {
+        console.log(error.message);
+    }
     return "email send";
 });
 exports.sendMail = sendMail;

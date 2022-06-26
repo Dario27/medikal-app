@@ -8,6 +8,7 @@
     "smtpMail":"smtp.gmail.com",
     "emailSend":"info.medikalapp@gmail.com",
     "claveCorreo":"CuentaApp@22",
-    "SENDGRID_API_KEY":"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"
+    "apikey_mail":"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",
+    "apiKey":"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"
 }
   
