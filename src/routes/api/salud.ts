@@ -18,7 +18,6 @@ import { TypeIndicators } from "../../model/Interfaces/TypeIndicators";
 import { verifyToken } from "../../Utils/VerifyToken";
 import { userUpdateHeight } from "../../services/UserServices";
 
-
 const router: Router = Router();
 
 router.get("/all", async(req:Request, res:Response)=>{
