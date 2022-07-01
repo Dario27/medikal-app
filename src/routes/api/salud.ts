@@ -16,6 +16,7 @@ import { IPresion } from "../../model/Ipresion";
 //import { IRecords } from "../../model/Records";
 import { TypeIndicators } from "../../model/Interfaces/TypeIndicators";
 import { verifyToken } from "../../Utils/VerifyToken";
+import { userUpdateHeight } from "../../services/UserServices";
 
 const router: Router = Router();
 
@@ -126,7 +127,7 @@ router.post("/imc", async(req:Request, res:Response)=>{
     const body = req.body;
     const estatura = body.height
     const peso = body.weight
-    const cintura = body.cintura
+    const cintura = body.waist
     const token: String = req.headers.authorization    
     var response = null
     try {
@@ -202,11 +203,14 @@ router.post("/imc", async(req:Request, res:Response)=>{
             cantImc : IMC,
             pesoReg : Number(peso),
             alturaReg: Number(estatura),
-            cintura: cintura,
+            waist: cintura,
             userID: dataToken.userId
         }
 
         await saveRecordsIMC(dataIMC) //graba la tabla en imcrecords
+        if (data.height !== Number(estatura)) {
+            await userUpdateHeight(Number(estatura), dataToken.email)
+        }
 
         const resp = {
             message: "success"

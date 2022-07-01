@@ -18,3 +18,7 @@ https://github.com/Dario27/medikal-app/issues
 ✔️ Jean Martillo
 
 Powered 2022
+
+## cuenta SendGrid
+correo:info.medikalapp@gmail.com
+pass: CuentaApp@221243

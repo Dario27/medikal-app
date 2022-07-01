@@ -8,11 +8,12 @@ export interface IUser extends Document {
     dateCreated     : Date;
     password        : String;
     phone           : String;
+    height          : Number;
     bloodType       : String;
-    age             : String;
+    age             : Number;
     gender          : String;
     codeValidador   : Number;
-    cedula                     : String;
+    identification  : String;
   }
 
   const userSchema: Schema = new Schema({
@@ -26,14 +27,18 @@ export interface IUser extends Document {
       default: Date.now
     },
     phone           : String,
+    height          : {
+      type: Number,
+      default: '0o0'
+    },
     bloodType       : String,
-    age             : String,
+    age             : Number,
     gender          : String,
     codeValidador   : {
       type: Number,
       default: '0o0'
     },
-    cedula            : String
+    identification   : String
   });
   
   // Note: OverwriteModelError: Cannot overwrite `User` model once compiled. error

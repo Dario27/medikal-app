@@ -109,4 +109,25 @@ export const userUpdate = async (dataUser:any) => {
     console.error(error.message);
     return error.message;
     } 
-    }
+}
+
+/**
+ * @param  {} estatura:any
+ * @return return Model user update field heigth
+ */
+ export const userUpdateHeight = async (estatura:any, email:any) => {
+    try {
+        const userUpdate = await User.findOneAndUpdate(
+        { "email": email},
+        { $set: {                
+            "height" : Number(estatura)
+        }},
+        { new: true })
+        console.log("Estatura actualizada con exito")
+        return userUpdate
+    
+    } catch (error) {
+    console.error(error.message);
+    return error.message;
+    } 
+}
