@@ -35,13 +35,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.calcularIMCPaciente = exports.dataProfile = exports.firstLogin = exports.sendMail = exports.decryptPassw = exports.encrypt = exports.convertDateWithMoment = void 0;
+exports.calcularPesoIdeal = exports.calcularIMCPaciente = exports.dataProfile = exports.firstLogin = exports.sendMail = exports.decryptPassw = exports.encrypt = exports.convertDateWithMoment = void 0;
 const moment_1 = __importDefault(require("moment"));
 const crypto_1 = __importDefault(require("crypto"));
 //import nodemailer from "nodemailer"
 const config_1 = __importDefault(require("config"));
 const jsonwebtoken = __importStar(require("jsonwebtoken"));
 const UserServices_1 = require("../services/UserServices");
+const Generos_1 = require("../model/Interfaces/Generos");
 const mail_1 = __importDefault(require("@sendgrid/mail"));
 //const SecrectIv = (CryptoJS.lib.WordArray.random(128 / 8)).toString();
 const SecrectIv = 'ABCDEF0123456789ABCDEF0123456789';
@@ -153,4 +154,22 @@ const calcularIMCPaciente = (estatura, peso) => {
     return imc;
 };
 exports.calcularIMCPaciente = calcularIMCPaciente;
+const calcularPesoIdeal = (estatura, genero) => {
+    var pesoIdeal = 0;
+    const estaturaCm = (estatura * 100);
+    try {
+        if (genero === Generos_1.Genero.Masculino) {
+            console.log("Masculino pesoIdeal  => ", ((0.75 * estaturaCm) - 62.5));
+            return pesoIdeal = ((0.75 * estaturaCm) - 62.5);
+        }
+        else {
+            console.log("Femenino pesoIdeal  => ", ((0.675 * estaturaCm) - 56.25));
+            return pesoIdeal = ((0.675 * estaturaCm) - 56.25);
+        }
+    }
+    catch (error) {
+        return error.message;
+    }
+};
+exports.calcularPesoIdeal = calcularPesoIdeal;
 //# sourceMappingURL=Utils.js.map

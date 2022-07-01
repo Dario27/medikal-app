@@ -4,6 +4,7 @@ import crypto from "crypto"
 import config from "config"
 import * as jsonwebtoken from "jsonwebtoken";
 import { findOneAndVerify } from "../services/UserServices";
+import {Genero} from "../model/Interfaces/Generos"
 import sendGrid from "@sendgrid/mail"
 
 //const SecrectIv = (CryptoJS.lib.WordArray.random(128 / 8)).toString();
@@ -133,4 +134,20 @@ export const calcularIMCPaciente =  (estatura: any, peso:any) => {
   const imc = parseFloat((peso/_estatura).toFixed(2))
   console.log("imc =>" , imc)
     return imc;
+}
+
+export const calcularPesoIdeal = (estatura:any, genero:any)=>{
+  var pesoIdeal = 0  
+  const estaturaCm = (estatura*100)
+  try {
+    if (genero === Genero.Masculino) { 
+      console.log("Masculino pesoIdeal  => ", ((0.75*estaturaCm)-62.5))
+      return pesoIdeal = ((0.75*estaturaCm)-62.5)
+    }else{
+      console.log("Femenino pesoIdeal  => ", ((0.675*estaturaCm)-56.25))
+      return pesoIdeal = ((0.675*estaturaCm)-56.25)
+    }
+  } catch (error) {
+    return error.message
+  }
 }
