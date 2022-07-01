@@ -11,8 +11,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const SaludServices_1 = require("./../../services/SaludServices");
+//import { ICertificate } from "./../../model/Certificates";
 const TypePeriodGlu_1 = require("./../../model/Interfaces/TypePeriodGlu");
 const Utils_1 = require("../../Utils/Utils");
+//import { IRecords } from "../../model/Records";
 const TypeIndicators_1 = require("../../model/Interfaces/TypeIndicators");
 const VerifyToken_1 = require("../../Utils/VerifyToken");
 const router = (0, express_1.Router)();
@@ -302,6 +304,22 @@ router.get('/lastImc', (req, res) => __awaiter(void 0, void 0, void 0, function*
     }
     catch (error) {
         return res.status(400).json(error.message);
+    }
+}));
+router.post('/pesoideal', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const body = req.body;
+        const token = req.headers.authorization;
+        const dataToken = yield (0, VerifyToken_1.verifyToken)(token);
+        const { isPacient, data } = yield (0, SaludServices_1.existsPacient)(dataToken.email);
+        const estatura = body.height;
+        const genero = data.gender;
+        var response = null;
+        const pesoIdeal = (0, Utils_1.calcularPesoIdeal)(estatura, genero);
+        return res.status(200).json({ "pesoIdeal": pesoIdeal });
+    }
+    catch (error) {
+        return res.status(400).json({ error: error.message });
     }
 }));
 exports.default = router;

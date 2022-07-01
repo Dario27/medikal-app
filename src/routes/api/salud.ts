@@ -7,13 +7,13 @@ import { existsPacient, findAllByIndicators,
     saveRecordsGlucemia,
     saveRecordsIMC, 
     saveRecordsPresion } from "./../../services/SaludServices";
-import { ICertificate } from "./../../model/Certificates";
+//import { ICertificate } from "./../../model/Certificates";
 import { TypePeriodGlu } from "./../../model/Interfaces/TypePeriodGlu";
-import { calcularIMCPaciente } from "../../Utils/Utils";
+import { calcularIMCPaciente, calcularPesoIdeal } from "../../Utils/Utils";
 import { IGlucemia } from "../../model/IGlucemia";
 import { IMasa } from "../../model/IMasa";
 import { IPresion } from "../../model/Ipresion";
-import { IRecords } from "../../model/Records";
+//import { IRecords } from "../../model/Records";
 import { TypeIndicators } from "../../model/Interfaces/TypeIndicators";
 import { verifyToken } from "../../Utils/VerifyToken";
 
@@ -346,6 +346,23 @@ router.get('/lastImc', async (req:Request, res:Response) => {
 
     } catch (error) {
         return res.status(400).json(error.message)
+    }
+})
+
+router.post ('/pesoideal',async (req:Request, res:Response)=>{
+    try {
+        const body = req.body        
+        const token: String = req.headers.authorization
+        const dataToken = await verifyToken(token)
+        const { isPacient, data} = await existsPacient(dataToken.email)
+        const estatura = body.height
+        const genero = data.gender
+        var response = null
+        const pesoIdeal = calcularPesoIdeal(estatura, genero)
+        return res.status(200).json({"pesoIdeal":pesoIdeal})
+
+    } catch (error) {
+        return res.status(400).json({ error:error.message})
     }
 })
 
