@@ -17,6 +17,7 @@ const Utils_1 = require("../../Utils/Utils");
 //import { IRecords } from "../../model/Records";
 const TypeIndicators_1 = require("../../model/Interfaces/TypeIndicators");
 const VerifyToken_1 = require("../../Utils/VerifyToken");
+const UserServices_1 = require("../../services/UserServices");
 const router = (0, express_1.Router)();
 router.get("/all", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const token = req.headers.authorization;
@@ -180,6 +181,9 @@ router.post("/imc", (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             userID: dataToken.userId
         };
         yield (0, SaludServices_1.saveRecordsIMC)(dataIMC); //graba la tabla en imcrecords
+        if (data.height !== Number(estatura)) {
+            yield (0, UserServices_1.userUpdateHeight)(Number(estatura), dataToken.email);
+        }
         const resp = {
             message: "success"
         };

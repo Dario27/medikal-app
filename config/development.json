@@ -5,10 +5,10 @@
     "nameDb":"medikal-app-dev",
     "environment": "development",
     "key":"ABCDEF0123456789ABCDEF0123456789",
-    "smtpMail":"smtp.gmail.com",
-    "emailSend":"info.medikalapp@gmail.com",
+    "smtpMail":"email-smtp.us-west-2.amazonaws.com", 
+    "userName":"info.medikalapp@gmail.com",
     "claveCorreo":"CuentaApp@22",
-    "apikey_mail":"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",
-    "apiKey":"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"
+    "userSmtp":"AKIAV22PCXM572HQ2ZVL",
+    "keySmtp":"BJSqUAX+1P0kkIzwt6vuglcAWcUql97NQKDeM9x1dV+B"
 }
   

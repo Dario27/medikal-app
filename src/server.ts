@@ -4,6 +4,8 @@ import bodyParser from "body-parser";
 import connectDB from "../config/database";
 import user from "./routes/api/user";
 import salud from "./routes/api/salud";
+import specialties from "./routes/api/specialities"
+import medicos from "./routes/api/medico";
 
 const app = express();
 
@@ -35,6 +37,8 @@ app.get('/', (req, res) => {
 
 app.use("/api/user", user);
 app.use("/api/salud/consultas",salud)
+app.use("/api/especialidades/consultar",specialties)
+app.use("/api/medico",medicos)
 
 // Una vez definidas nuestras rutas podemos iniciar el servidor
 const port = app.get("port");
@@ -42,43 +46,4 @@ const server = app.listen(port, () =>
   console.log(`Server started on port ${port} - environment ${config.get("environment")}`)
 );
 
-
-
-/**
- * 
- * //Data Encryption Function
-  encryptData(text) {
-    var keySize = 256;
-    var salt = CryptoJS.lib.WordArray.random(16);
-    var key = CryptoJS.PBKDF2(this.encryptSecretKey, salt, {
-      keySize: keySize / 32,
-      iterations: 100,
-    });
-
-    var iv = CryptoJS.lib.WordArray.random(128 / 8);
-
-    var encrypted = CryptoJS.AES.encrypt(text, key, {
-      iv: iv,
-      padding: CryptoJS.pad.Pkcs7,
-      mode: CryptoJS.mode.CBC,
-    });
-
-    var result = CryptoJS.enc.Base64.stringify(
-      salt.concat(iv).concat(encrypted.ciphertext)
-    );
-
-    return result;
-  }
-
-  //Funcion para realizar la desencriptacion
-  decrypt(ciphertextB64) {
-    var key = CryptoJS.enc.Utf8.parse(this.encryptSecretKey);
-    var iv = CryptoJS.lib.WordArray.create([0x00, 0x00, 0x00, 0x00]);
-
-    var decrypted = CryptoJS.AES.decrypt(ciphertextB64, key, { iv: iv });
-    return decrypted.toString(CryptoJS.enc.Utf8);
-  }
- * 
- * 
- */
 export default server;

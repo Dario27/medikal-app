@@ -40,7 +40,8 @@ const express_1 = require("express");
 const UserServices_1 = require("../../services/UserServices");
 const Utils_1 = require("../../Utils/Utils");
 const jsonwebtoken = __importStar(require("jsonwebtoken"));
-//import Mail from "nodemailer/lib/mailer";
+const TypeLogin_1 = require("../../model/Interfaces/TypeLogin");
+const MedicoServices_1 = require("../../services/MedicoServices");
 const router = (0, express_1.Router)();
 router.post("/create", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const body = req.body;
@@ -112,31 +113,66 @@ router.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* 
     const body = req.body;
     const password = body.password;
     const email = body.email;
-    //const apiKey        = req.headers["x-api-key"]
+    const type = body.type;
     try {
         console.log("email ", email);
         const encryptSecretKey = config_1.default.get("key");
         console.log("encryptSecretKey =>", encryptSecretKey);
-        const foundUser = yield (0, UserServices_1.findOneAndVerify)(email);
-        console.log("users =>", foundUser);
-        if (foundUser !== null) {
-            const passwTextB64 = foundUser.password;
-            console.log("pass1 ", passwTextB64);
-            const passwText = (0, Utils_1.decryptPassw)(passwTextB64, encryptSecretKey);
-            console.log("constraseña plana => ", passwText);
-            var data = null;
-            if (foundUser === null) {
-                data = {
+        if (type === TypeLogin_1.TypeLogin.paciente) { // si es 2:Logueamos con al app al paciente
+            const foundUser = yield (0, UserServices_1.findOneAndVerify)(email);
+            console.log("users =>", foundUser);
+            if (foundUser !== null) {
+                const passwTextB64 = foundUser.password;
+                console.log("pass1 ", passwTextB64);
+                const passwText = (0, Utils_1.decryptPassw)(passwTextB64, encryptSecretKey);
+                console.log("constraseña plana => ", passwText);
+                var data = null;
+                if (foundUser === null) {
+                    data = {
+                        message: "Usuario no existe",
+                        status: false
+                    };
+                    return res.status(404).json(data);
+                }
+                else {
+                    if (password === passwText) {
+                        const _token = jsonwebtoken.sign({ userId: foundUser._id, email: foundUser.email, cedula: foundUser.identification }, config_1.default.get("jwtSecret"));
+                        data = {
+                            message: "Usuario encontrado",
+                            status: true,
+                            token: _token
+                        };
+                        return res.status(200).send(data);
+                    }
+                    else {
+                        data = {
+                            message: "Usuario o Contraseña incorrectas",
+                            status: false
+                        };
+                        return res.status(400).send(data);
+                    }
+                }
+            }
+            else {
+                const rdata = {
                     message: "Usuario no existe",
                     status: false
                 };
-                return res.status(404).json(data);
+                return res.status(404).json(rdata);
             }
-            else {
+        }
+        else { // si es 1:Logueamos al medico desde el portal web
+            const foundMedico = yield (0, MedicoServices_1.verifyMedicoByEmail)(email);
+            console.log("medico =>", foundMedico);
+            if (foundMedico !== null) {
+                const passwTextB64 = foundMedico.password;
+                console.log("pass1 ", passwTextB64);
+                const passwText = (0, Utils_1.decryptPassw)(passwTextB64, encryptSecretKey);
+                console.log("constraseña plana => ", passwText);
                 if (password === passwText) {
-                    const _token = jsonwebtoken.sign({ userId: foundUser._id, email: foundUser.email, cedula: foundUser.cedula }, config_1.default.get("jwtSecret"));
+                    const _token = jsonwebtoken.sign({ userId: foundMedico._id, email: foundMedico.email, cedula: foundMedico.identification }, config_1.default.get("jwtSecret"));
                     data = {
-                        message: "Usuario encontrado",
+                        message: "Medico encontrado",
                         status: true,
                         token: _token
                     };
@@ -150,13 +186,6 @@ router.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* 
                     return res.status(400).send(data);
                 }
             }
-        }
-        else {
-            const rdata = {
-                message: "Usuario no existe",
-                status: false
-            };
-            return res.status(404).json(rdata);
         }
     }
     catch (error) {
@@ -180,11 +209,18 @@ router.post("/forgotPassw", (req, res) => __awaiter(void 0, void 0, void 0, func
             console.log("codeValidator => ", codeValidator);
             const { insert } = yield (0, UserServices_1.insCodeValidator)(codeValidator, email);
             if (insert) {
-                yield (0, Utils_1.sendMail)(userData.email, codeValidator);
-                return res.status(200).json({
-                    message: "Correo enviado con exito",
-                    status: "success"
-                });
+                if (yield (0, Utils_1.sendMail)(userData.email, codeValidator)) {
+                    return res.status(200).json({
+                        message: "Correo enviado con exito",
+                        status: "success"
+                    });
+                }
+                else {
+                    return res.status(400).json({
+                        message: "No se podido enviar el correo",
+                        status: "fail"
+                    });
+                }
             }
             else {
                 return res.status(400).json({

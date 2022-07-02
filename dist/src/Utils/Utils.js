@@ -43,7 +43,7 @@ const config_1 = __importDefault(require("config"));
 const jsonwebtoken = __importStar(require("jsonwebtoken"));
 const UserServices_1 = require("../services/UserServices");
 const Generos_1 = require("../model/Interfaces/Generos");
-const mail_1 = __importDefault(require("@sendgrid/mail"));
+const nodemailer_1 = __importDefault(require("nodemailer"));
 //const SecrectIv = (CryptoJS.lib.WordArray.random(128 / 8)).toString();
 const SecrectIv = 'ABCDEF0123456789ABCDEF0123456789';
 const convertDateWithMoment = (stringDate) => {
@@ -75,29 +75,48 @@ const decryptPassw = (ciphertextB64, encryptSecretKey) => {
 exports.decryptPassw = decryptPassw;
 const sendMail = (email, codeValidator) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(config_1.default.get("nameDb"));
-    //const host = config.get("smtpMail")// "smtp.gmail.com"
-    const user = config_1.default.get("emailSend"); //"chilansteven221@gmail.com"
-    //const passw = config.get("claveCorreo")//"CuentaGmail2022"
-    const apiKey = config_1.default.get("apikey_mail").toString(); // api akey sendGrid
-    const username = user.toString();
-    mail_1.default.setApiKey(apiKey);
-    console.log("apikey => ", apiKey);
-    const infoMsg = {
-        to: email,
-        from: `Info medikal-app <${username}>`,
-        subject: "Recuperar contraseña",
-        text: "Para restablecer su contraseña ingresar el codigo de verificacion.",
-        html: `<p>Solicitud de recuperacion de contraseña, su codigo de verificacion es: <strong>${codeValidator}</strong> </p>`
-    };
-    console.log("Message sent: %s", infoMsg);
+    const hostSmtp = config_1.default.get("smtpMail"); // "smtp.gmail.com"
+    const user = config_1.default.get("userSmtp"); //"chilansteven221@gmail.com"
+    const passw = config_1.default.get("keySmtp"); //"CuentaGmail2022"
+    const username = config_1.default.get("userName");
     try {
-        const responsemail = yield mail_1.default.send(infoMsg);
-        console.log("responsemail => ", responsemail);
+        const config = {
+            host: hostSmtp,
+            port: 465,
+            secure: true,
+            auth: {
+                user: user,
+                pass: passw, // password aws provider
+            }
+        };
+        const infoMsg = {
+            to: email,
+            from: `Info medikal-app <${username}>`,
+            subject: "Recuperar contraseña",
+            text: "Para restablecer su contraseña ingresar el codigo de verificacion.",
+            html: `<p>Solicitud de recuperacion de contraseña, su codigo de verificacion es: <strong>${codeValidator}</strong> </p>`
+        };
+        const transporter = nodemailer_1.default.createTransport(config);
+        // send mail with defined transport object
+        const messageSend = yield transporter.sendMail({
+            from: infoMsg.from,
+            to: infoMsg.to,
+            subject: infoMsg.subject,
+            text: infoMsg.text,
+            html: infoMsg.html, // html body
+        });
+        console.log("Message sent: %s", messageSend);
+        if (messageSend.messageId.length > 0) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
     catch (error) {
         console.log(error.message);
+        return false;
     }
-    return "email send";
 });
 exports.sendMail = sendMail;
 const firstLogin = (email, passw, token) => __awaiter(void 0, void 0, void 0, function* () {
