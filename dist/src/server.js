@@ -9,6 +9,8 @@ const body_parser_1 = __importDefault(require("body-parser"));
 const database_1 = __importDefault(require("../config/database"));
 const user_1 = __importDefault(require("./routes/api/user"));
 const salud_1 = __importDefault(require("./routes/api/salud"));
+const specialities_1 = __importDefault(require("./routes/api/specialities"));
+const medico_1 = __importDefault(require("./routes/api/medico"));
 const app = (0, express_1.default)();
 (0, database_1.default)();
 // Express configuration
@@ -34,45 +36,10 @@ app.get('/', (req, res) => {
 });
 app.use("/api/user", user_1.default);
 app.use("/api/salud/consultas", salud_1.default);
+app.use("/api/especialidades/consultar", specialities_1.default);
+app.use("/api/medico", medico_1.default);
 // Una vez definidas nuestras rutas podemos iniciar el servidor
 const port = app.get("port");
 const server = app.listen(port, () => console.log(`Server started on port ${port} - environment ${config_1.default.get("environment")}`));
-/**
- *
- * //Data Encryption Function
-  encryptData(text) {
-    var keySize = 256;
-    var salt = CryptoJS.lib.WordArray.random(16);
-    var key = CryptoJS.PBKDF2(this.encryptSecretKey, salt, {
-      keySize: keySize / 32,
-      iterations: 100,
-    });
-
-    var iv = CryptoJS.lib.WordArray.random(128 / 8);
-
-    var encrypted = CryptoJS.AES.encrypt(text, key, {
-      iv: iv,
-      padding: CryptoJS.pad.Pkcs7,
-      mode: CryptoJS.mode.CBC,
-    });
-
-    var result = CryptoJS.enc.Base64.stringify(
-      salt.concat(iv).concat(encrypted.ciphertext)
-    );
-
-    return result;
-  }
-
-  //Funcion para realizar la desencriptacion
-  decrypt(ciphertextB64) {
-    var key = CryptoJS.enc.Utf8.parse(this.encryptSecretKey);
-    var iv = CryptoJS.lib.WordArray.create([0x00, 0x00, 0x00, 0x00]);
-
-    var decrypted = CryptoJS.AES.decrypt(ciphertextB64, key, { iv: iv });
-    return decrypted.toString(CryptoJS.enc.Utf8);
-  }
- *
- *
- */
 exports.default = server;
 //# sourceMappingURL=server.js.map

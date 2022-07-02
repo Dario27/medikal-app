@@ -4,7 +4,8 @@ import { IUser, User } from "../../model/User";
 import { findOneAndVerify, createUser, updatePassword, insCodeValidator, verifyCode, userUpdate } from "../../services/UserServices";
 import { convertDateWithMoment, decryptPassw, encrypt, firstLogin, sendMail, dataProfile } from "../../Utils/Utils"
 import * as jsonwebtoken from "jsonwebtoken";
-//import Mail from "nodemailer/lib/mailer";
+import { TypeLogin } from "../../model/Interfaces/TypeLogin";
+import { verifyMedicoByEmail } from "../../services/MedicoServices";
 
 const router: Router = Router();
 
@@ -87,34 +88,68 @@ router.post('/login', async(req:Request, res:Response)=>{
     const body = req.body 
     const password      = body.password
     const email         = body.email
-    //const apiKey        = req.headers["x-api-key"]
+    const type = body.type
 
     try {
 
         console.log("email ", email)
         const encryptSecretKey:any = config.get("key")
         console.log("encryptSecretKey =>", encryptSecretKey)
-        const foundUser = await findOneAndVerify(email)
-        console.log("users =>", foundUser)
-        if(foundUser !== null){            
-            const passwTextB64 = foundUser.password 
-            console.log("pass1 ", passwTextB64)
 
-            const passwText = decryptPassw(passwTextB64, encryptSecretKey)
-            console.log("constraseña plana => ", passwText);
-            var data = null
-
-            if(foundUser === null){
-                data = {
+        if (type === TypeLogin.paciente) { // si es 2:Logueamos con al app al paciente
+            const foundUser = await findOneAndVerify(email)
+            console.log("users =>", foundUser)
+            if(foundUser !== null){            
+                const passwTextB64 = foundUser.password 
+                console.log("pass1 ", passwTextB64)
+    
+                const passwText = decryptPassw(passwTextB64, encryptSecretKey)
+                console.log("constraseña plana => ", passwText);
+                var data = null
+    
+                if(foundUser === null){
+                    data = {
+                        message: "Usuario no existe",
+                        status:  false                    
+                    }
+                    return res.status(404).json(data);
+                }else{
+                    if(password === passwText){
+                        const _token = jsonwebtoken.sign({userId: foundUser._id, email: foundUser.email, cedula:foundUser.identification}, config.get("jwtSecret"))
+                        data = {
+                            message: "Usuario encontrado",
+                            status:  true,
+                            token: _token
+                        }
+                        return res.status(200).send(data)
+                    }else{
+                        data = {
+                            message: "Usuario o Contraseña incorrectas",
+                            status:  false
+                        }
+                        return res.status(400).send(data)
+                    }                
+                }
+            }else {
+                const rdata = {
                     message: "Usuario no existe",
                     status:  false                    
                 }
-                return res.status(404).json(data);
-            }else{
+                return res.status(404).json(rdata);
+            }            
+        } else { // si es 1:Logueamos al medico desde el portal web
+            const foundMedico = await verifyMedicoByEmail(email)
+            console.log("medico =>", foundMedico)
+            if (foundMedico !== null) {
+
+                const passwTextB64 = foundMedico.password 
+                console.log("pass1 ", passwTextB64)
+                const passwText = decryptPassw(passwTextB64, encryptSecretKey)
+                console.log("constraseña plana => ", passwText)
                 if(password === passwText){
-                    const _token = jsonwebtoken.sign({userId: foundUser._id, email: foundUser.email, cedula:foundUser.cedula}, config.get("jwtSecret"))
+                    const _token = jsonwebtoken.sign({userId: foundMedico._id, email: foundMedico.email, cedula:foundMedico.identification}, config.get("jwtSecret"))
                     data = {
-                        message: "Usuario encontrado",
+                        message: "Medico encontrado",
                         status:  true,
                         token: _token
                     }
@@ -125,16 +160,10 @@ router.post('/login', async(req:Request, res:Response)=>{
                         status:  false
                     }
                     return res.status(400).send(data)
-                }                
+                }
             }
-        }else {
-            const rdata = {
-                message: "Usuario no existe",
-                status:  false                    
-            }
-            return res.status(404).json(rdata);
         }
-
+        
     } catch (error) {
 
         const errorResponse = {
@@ -161,12 +190,19 @@ router.post("/forgotPassw", async(req:Request, res:Response) => {
 
             const { insert } = await insCodeValidator(codeValidator, email)
             if(insert){
-                await sendMail(userData.email, codeValidator)
+                if(await sendMail(userData.email, codeValidator)){
+                    return res.status(200).json({                    
+                        message: "Correo enviado con exito",
+                        status:  "success"
+                    })
+                }else {
+                    return res.status(400).json({                    
+                        message: "No se podido enviar el correo",
+                        status:  "fail"
+                    })
+                }
 
-                return res.status(200).json({                    
-                    message: "Correo enviado con exito",
-                    status:  "success"
-                })
+                
             }else{
                 return res.status(400).json({
                     message: "Error, no se ha podido generar el codigo temporal",

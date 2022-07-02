@@ -5,7 +5,7 @@ import config from "config"
 import * as jsonwebtoken from "jsonwebtoken";
 import { findOneAndVerify } from "../services/UserServices";
 import {Genero} from "../model/Interfaces/Generos"
-import sendGrid from "@sendgrid/mail"
+import nodemailer from "nodemailer"
 
 //const SecrectIv = (CryptoJS.lib.WordArray.random(128 / 8)).toString();
 const SecrectIv = 'ABCDEF0123456789ABCDEF0123456789';
@@ -46,33 +46,52 @@ export const decryptPassw = (ciphertextB64:any, encryptSecretKey:any) =>{
 export const sendMail = async(email:any, codeValidator:any)=>{
   
   console.log(config.get("nameDb"))
-  //const host = config.get("smtpMail")// "smtp.gmail.com"
-  const user = config.get("emailSend")//"chilansteven221@gmail.com"
-  //const passw = config.get("claveCorreo")//"CuentaGmail2022"
-  const apiKey = config.get("apikey_mail").toString() // api akey sendGrid
-  const username = user.toString()
-  sendGrid.setApiKey(apiKey)
-  console.log("apikey => ", apiKey)
-
-  const infoMsg ={
-    to: email,
-    from: `Info medikal-app <${username}>`,
-    subject: "Recuperar contraseña",
-    text: "Para restablecer su contraseña ingresar el codigo de verificacion.",
-    html: `<p>Solicitud de recuperacion de contraseña, su codigo de verificacion es: <strong>${codeValidator}</strong> </p>`
-  }
-
-  console.log("Message sent: %s", infoMsg);
+  const hostSmtp: string= config.get("smtpMail")// "smtp.gmail.com"
+  const user:string = config.get("userSmtp")//"chilansteven221@gmail.com"
+  const passw:string = config.get("keySmtp")//"CuentaGmail2022"
+  const username = config.get("userName")
 
   try {
-   
-   const responsemail = await sendGrid.send(infoMsg)
-   console.log("responsemail => ", responsemail)
+
+    const config ={
+      host: hostSmtp,
+      port: 465,
+      secure: true, // true for 465, false for other ports
+      auth: {
+        user: user, // user aws provider
+        pass: passw, // password aws provider
+      }
+    }
+    const infoMsg ={
+      to: email,
+      from: `Info medikal-app <${username}>`,
+      subject: "Recuperar contraseña",
+      text: "Para restablecer su contraseña ingresar el codigo de verificacion.",
+      html: `<p>Solicitud de recuperacion de contraseña, su codigo de verificacion es: <strong>${codeValidator}</strong> </p>`
+    }
+
+    const transporter = nodemailer.createTransport(config)
+
+    // send mail with defined transport object
+      const messageSend = await transporter.sendMail({
+          from: infoMsg.from, // sender address
+          to: infoMsg.to, // list of receivers
+          subject: infoMsg.subject, // Subject line
+          text: infoMsg.text, // plain text body
+          html:infoMsg.html, // html body
+      });
+
+      console.log("Message sent: %s", messageSend);
+
+      if (messageSend.messageId.length > 0) {
+        return true
+      }else{
+        return false
+      }   
   } catch (error) {
     console.log(error.message)
+    return false
   }
-
-  return "email send"
 }
 
 export const firstLogin = async (email:any, passw:any, token:any) => {

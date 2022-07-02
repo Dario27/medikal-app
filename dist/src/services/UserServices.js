@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.userUpdate = exports.verifyCode = exports.insCodeValidator = exports.updatePassword = exports.createUser = exports.findOneAndVerify = void 0;
+exports.userUpdateHeight = exports.userUpdate = exports.verifyCode = exports.insCodeValidator = exports.updatePassword = exports.createUser = exports.findOneAndVerify = void 0;
 const User_1 = require("../model/User");
 const findOneAndVerify = (email) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -112,4 +112,22 @@ const userUpdate = (dataUser) => __awaiter(void 0, void 0, void 0, function* () 
     }
 });
 exports.userUpdate = userUpdate;
+/**
+ * @param  {} estatura:any
+ * @return return Model user update field heigth
+ */
+const userUpdateHeight = (estatura, email) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const userUpdate = yield User_1.User.findOneAndUpdate({ "email": email }, { $set: {
+                "height": Number(estatura)
+            } }, { new: true });
+        console.log("Estatura actualizada con exito");
+        return userUpdate;
+    }
+    catch (error) {
+        console.error(error.message);
+        return error.message;
+    }
+});
+exports.userUpdateHeight = userUpdateHeight;
 //# sourceMappingURL=UserServices.js.map
