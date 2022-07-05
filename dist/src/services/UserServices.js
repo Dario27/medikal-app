@@ -100,7 +100,7 @@ const userUpdate = (dataUser) => __awaiter(void 0, void 0, void 0, function* () 
                 "lName": dataUser.lName,
                 "birthDate": dataUser.birthDate,
                 "phone": dataUser.phone,
-                "cedula": dataUser.cedula,
+                "identification": dataUser.identification,
                 "bloodType": dataUser.bloodType,
                 "gender": dataUser.gender
             } }, { new: true });

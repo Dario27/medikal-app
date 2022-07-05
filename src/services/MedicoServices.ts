@@ -50,3 +50,39 @@ export const verifyMedicoByEmail = async (email:any) => {
        return error.message
     }
 }
+
+export const editarDatosMedico = async (data:IMedico) => {
+    try {
+        const mediUpdate = await Medicos.findOneAndUpdate(
+            { "email": data.email},
+            { $set: {                
+                "name" : data.name, 
+                "lastName":data.lastName,
+                "birthDate":data.birthDate,
+                "phone":data.phone,
+                "identification":data.identification,
+                "gender":data.gender,
+                "address":data.address,
+            }},
+            { new: true })    
+            return mediUpdate
+            
+    } catch (error) {
+       return error.message
+    }
+}
+
+export const editarPasswordMedico = async (data:IMedico) => {
+    try {
+        const mediUpdate = await Medicos.findOneAndUpdate(
+            { "email": data.email},
+            { $set: {                
+                "password" : data.password
+            }},
+            { new: true })
+    
+            return mediUpdate
+    } catch (error) {
+       return error.message
+    }
+}

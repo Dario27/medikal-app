@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.verifyMedicoByEmail = exports.verifyMedicoByIdentification = exports.loginMedico = exports.createMedico = exports.consultarMedicos = void 0;
+exports.editarPasswordMedico = exports.editarDatosMedico = exports.verifyMedicoByEmail = exports.verifyMedicoByIdentification = exports.loginMedico = exports.createMedico = exports.consultarMedicos = void 0;
 const Medico_1 = require("../model/Medico");
 const consultarMedicos = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -67,4 +67,34 @@ const verifyMedicoByEmail = (email) => __awaiter(void 0, void 0, void 0, functio
     }
 });
 exports.verifyMedicoByEmail = verifyMedicoByEmail;
+const editarDatosMedico = (data) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const mediUpdate = yield Medico_1.Medicos.findOneAndUpdate({ "email": data.email }, { $set: {
+                "name": data.name,
+                "lastName": data.lastName,
+                "birthDate": data.birthDate,
+                "phone": data.phone,
+                "identification": data.identification,
+                "gender": data.gender,
+                "address": data.address,
+            } }, { new: true });
+        return mediUpdate;
+    }
+    catch (error) {
+        return error.message;
+    }
+});
+exports.editarDatosMedico = editarDatosMedico;
+const editarPasswordMedico = (data) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const mediUpdate = yield Medico_1.Medicos.findOneAndUpdate({ "email": data.email }, { $set: {
+                "password": data.password
+            } }, { new: true });
+        return mediUpdate;
+    }
+    catch (error) {
+        return error.message;
+    }
+});
+exports.editarPasswordMedico = editarPasswordMedico;
 //# sourceMappingURL=MedicoServices.js.map
