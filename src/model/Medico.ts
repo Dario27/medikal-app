@@ -23,7 +23,7 @@ const medicoSchema: Schema = new Schema({
     specialityID:{
         type:Schema.Types.ObjectId,
         required:true,
-        ref: 'specialties'
+        ref: 'specialities'
     },
     age:Number,
     birthDate:Date,

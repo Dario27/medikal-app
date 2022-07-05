@@ -32,5 +32,5 @@ const specialitiesSchema = new mongoose_1.Schema({
     Description: String,
 });
 // Note: OverwriteModelError: Cannot overwrite `Specialities` model once compiled. error
-exports.Specialities = (mongoose_1.default.models.specialties || mongoose_1.default.model('specialties', specialitiesSchema, "specialties"));
+exports.Specialities = (mongoose_1.default.models.specialities || mongoose_1.default.model('specialities', specialitiesSchema, "specialities"));
 //# sourceMappingURL=Specialities.js.map

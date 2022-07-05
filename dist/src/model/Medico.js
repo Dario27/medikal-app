@@ -33,7 +33,7 @@ const medicoSchema = new mongoose_1.Schema({
     specialityID: {
         type: mongoose_1.Schema.Types.ObjectId,
         required: true,
-        ref: 'specialties'
+        ref: 'specialities'
     },
     age: Number,
     birthDate: Date,

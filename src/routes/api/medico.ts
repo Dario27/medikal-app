@@ -2,14 +2,23 @@ import { Router, Response, Request } from "express";
 import config from "config";
 import { encrypt } from "../../Utils/Utils";
 import { IMedico } from "../../model/Medico";
-import { createMedico, verifyMedicoByIdentification } from "../../services/MedicoServices";
+import { consultarMedicos, createMedico, verifyMedicoByIdentification } from "../../services/MedicoServices";
 
 
 const router: Router = Router();
 
 router.get("/all", async(req:Request, res:Response)=>{
-    
-    //res.status(200).json(resp)
+    try {
+        const listMedicos:Array<IMedico> = await consultarMedicos()
+        if (listMedicos.length === 0) {
+            return res.status(400).json({"message":"No hay informacion disponible"})
+        }else{
+            const resp = listMedicos
+            return res.status(200).json(resp)            
+        }
+    } catch (error) {
+        return res.status(400).json({"errorMessage":error.message})
+    }
 })
 
 router.post("/createmedico", async(req:Request, res:Response)=>{

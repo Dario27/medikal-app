@@ -88,7 +88,7 @@ export const verifyCode = async (code:number, email:string) => {
  * @param  {} dataUser:IUser
  * @return return Model user created
  */
-export const userUpdate = async (dataUser:any) => {
+export const userUpdate = async (dataUser:IUser) => {
     try {
         const userUpdate = await User.findOneAndUpdate(
         { "email": dataUser.email},
@@ -97,7 +97,7 @@ export const userUpdate = async (dataUser:any) => {
             "lName":dataUser.lName,
             "birthDate":dataUser.birthDate,
             "phone":dataUser.phone,
-            "cedula":dataUser.cedula,
+            "identification":dataUser.identification,
             "bloodType":dataUser.bloodType,
             "gender":dataUser.gender
         }},

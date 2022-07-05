@@ -15,4 +15,4 @@ const specialitiesSchema: Schema = new Schema({
 });
 
   // Note: OverwriteModelError: Cannot overwrite `Specialities` model once compiled. error
-  export const Specialities = (mongoose.models.specialties || mongoose.model<ISpecialities>('specialties', specialitiesSchema, "specialties"));
+  export const Specialities = (mongoose.models.specialities || mongoose.model<ISpecialities>('specialities', specialitiesSchema, "specialities"));

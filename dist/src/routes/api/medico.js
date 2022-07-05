@@ -18,7 +18,19 @@ const Utils_1 = require("../../Utils/Utils");
 const MedicoServices_1 = require("../../services/MedicoServices");
 const router = (0, express_1.Router)();
 router.get("/all", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    //res.status(200).json(resp)
+    try {
+        const listMedicos = yield (0, MedicoServices_1.consultarMedicos)();
+        if (listMedicos.length === 0) {
+            return res.status(400).json({ "message": "No hay informacion disponible" });
+        }
+        else {
+            const resp = listMedicos;
+            return res.status(200).json(resp);
+        }
+    }
+    catch (error) {
+        return res.status(400).json({ "errorMessage": error.message });
+    }
 }));
 router.post("/createmedico", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const body = req.body;
