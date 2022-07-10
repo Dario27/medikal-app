@@ -37,6 +37,7 @@ const presionSchema = new mongoose_1.Schema({
     },
     registroPresionAlta: Number,
     registroPresionBaja: Number,
+    tipoPresion: String,
     userID: {
         type: mongoose_1.default.Schema.Types.ObjectId,
         required: true,

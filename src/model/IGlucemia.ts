@@ -5,6 +5,7 @@ export interface IGlucemia extends Document {
     id                                : Number;
     dateOfCreated : Date;
     cantGlucemia    : Number;
+    tipoGlucemia     : String;
     userID                    : Object;
 }
 
@@ -15,6 +16,7 @@ const glucemiaSchema: Schema = new Schema({
         default: Date.now
     },
     cantGlucemia  : Number,
+    tipoGlucemia   : String,
     userID :{
         type: mongoose.Schema.Types.ObjectId,
         required : true,

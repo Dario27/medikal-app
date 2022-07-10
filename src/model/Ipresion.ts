@@ -6,6 +6,7 @@ export interface IPresion extends Document {
     dateOfCreated   : Date;
     registroPresionAlta  : Number;
     registroPresionBaja  : Number;
+    tipoPresion                       : String;
     userID                    : Object;
 }
 
@@ -17,6 +18,7 @@ const presionSchema: Schema = new Schema({
     },
     registroPresionAlta  : Number,
     registroPresionBaja : Number,
+    tipoPresion : String,
     userID :{
         type: mongoose.Schema.Types.ObjectId,
         required : true,
