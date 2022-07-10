@@ -102,6 +102,7 @@ router.post("/glucemia", async(req:Request, res:Response)=>{
             id: id,
             dateOfCreated: new Date(new Date().toISOString()),
             cantGlucemia : Number(registro_glucemia),
+            tipoGlucemia : respuesta,
             userID: dataToken.userId
         }
 
@@ -195,7 +196,7 @@ router.post("/imc", async(req:Request, res:Response)=>{
 
         const dataToken = await verifyToken(token)
         const { isPacient, data} = await existsPacient(dataToken.email)
-        const id = await findNewIdImc(data._id, TypeIndicators.sobrepeso)
+        const id = await findNewIdImc(data._id, TypeIndicators.peso)
         
         const dataIMC : IMasa ={
             id:id,
@@ -204,6 +205,7 @@ router.post("/imc", async(req:Request, res:Response)=>{
             pesoReg : Number(peso),
             alturaReg: Number(estatura),
             waist: cintura,
+            tipoPeso : response.message,
             userID: dataToken.userId
         }
 
@@ -304,6 +306,7 @@ router.post("/presionarterial", async(req:Request, res:Response)=>{
             dateOfCreated: new Date(new Date().toISOString()),
             registroPresionAlta : Number(presionAlta),
             registroPresionBaja: Number(presionBaja),
+            tipoPresion : respuestaMedica,
             userID: dataToken.userId
         }
         

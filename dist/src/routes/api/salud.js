@@ -88,6 +88,7 @@ router.post("/glucemia", (req, res) => __awaiter(void 0, void 0, void 0, functio
             id: id,
             dateOfCreated: new Date(new Date().toISOString()),
             cantGlucemia: Number(registro_glucemia),
+            tipoGlucemia: respuesta,
             userID: dataToken.userId
         };
         yield (0, SaludServices_1.saveRecordsGlucemia)(dataGlucemia);
@@ -170,7 +171,7 @@ router.post("/imc", (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         }
         const dataToken = yield (0, VerifyToken_1.verifyToken)(token);
         const { isPacient, data } = yield (0, SaludServices_1.existsPacient)(dataToken.email);
-        const id = yield (0, SaludServices_1.findNewIdImc)(data._id, TypeIndicators_1.TypeIndicators.sobrepeso);
+        const id = yield (0, SaludServices_1.findNewIdImc)(data._id, TypeIndicators_1.TypeIndicators.peso);
         const dataIMC = {
             id: id,
             dateOfCreated: new Date(new Date().toISOString()),
@@ -178,6 +179,7 @@ router.post("/imc", (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             pesoReg: Number(peso),
             alturaReg: Number(estatura),
             waist: cintura,
+            tipoPeso: response.message,
             userID: dataToken.userId
         };
         yield (0, SaludServices_1.saveRecordsIMC)(dataIMC); //graba la tabla en imcrecords
@@ -267,6 +269,7 @@ router.post("/presionarterial", (req, res) => __awaiter(void 0, void 0, void 0, 
             dateOfCreated: new Date(new Date().toISOString()),
             registroPresionAlta: Number(presionAlta),
             registroPresionBaja: Number(presionBaja),
+            tipoPresion: respuestaMedica,
             userID: dataToken.userId
         };
         yield (0, SaludServices_1.saveRecordsPresion)(dataPresion);

@@ -1,10 +1,11 @@
+import { AggregatePaginateResult } from "mongoose"
 import { Records, IRecords } from "../model/Records";
 import { ICertificate } from "../model/Certificates"
 import { Glucemia, IGlucemia } from "../model/IGlucemia";
 import  { IMasa, Imc } from "../model/IMasa";
 import { IPresion, Presion } from "../model/Ipresion";
 import { User } from "../model/User";
-import { AggregatePaginateResult } from "mongoose"
+
 
 export const saveRecordsGlucemia = async (dataGlucemia:IGlucemia) => {
 

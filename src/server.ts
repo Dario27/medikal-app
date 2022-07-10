@@ -6,6 +6,7 @@ import user from "./routes/api/user";
 import salud from "./routes/api/salud";
 import specialties from "./routes/api/specialities"
 import medicos from "./routes/api/medico";
+import pacientes from "./routes/api/pacientes"
 
 const app = express();
 
@@ -39,6 +40,7 @@ app.use("/api/user", user);
 app.use("/api/salud/consultas",salud)
 app.use("/api/especialidades/consultar",specialties)
 app.use("/api/medico",medicos)
+app.use("/api/pacientes",pacientes)
 
 // Una vez definidas nuestras rutas podemos iniciar el servidor
 const port = app.get("port");
